@@ -22,6 +22,15 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("is_admin"):
+            flash("Admin access only.", "danger")
+            return redirect(url_for("index"))
+        return f(*args, **kwargs)
+    return decorated
+
 
 # ── Auth Routes ───────────────────────────────────────────────────────────────
 @app.route("/signup", methods=["GET", "POST"])
@@ -63,7 +72,10 @@ def login():
         if user:
             session["user_id"]   = user["id"]
             session["user_name"] = user["full_name"]
+            session["is_admin"]  = user.get("is_admin", False)
             flash(f"Welcome back, {user['full_name']}!", "success")
+            if user.get("is_admin"):
+                return redirect(url_for("admin_dashboard"))
             return redirect(url_for("index"))
         flash("Invalid email or password.", "danger")
     return render_template("login.html")
@@ -178,5 +190,24 @@ def cancel(booking_id):
     return redirect(url_for("my_bookings"))
 
 
-if __name__ == "__main__":
-    app.run(debug=False)
+# Vercel needs the app object exposed at module level
+
+
+# ── Admin Routes ──────────────────────────────────────────────────────────────
+@app.route("/admin")
+@admin_required
+def admin_dashboard():
+    bookings = db.get_all_bookings()
+    users    = db.get_all_users()
+    trips    = db.get_all_trips()
+    return render_template("admin.html", bookings=bookings, users=users, trips=trips)
+
+@app.route("/admin/cancel/<booking_id>", methods=["POST"])
+@admin_required
+def admin_cancel(booking_id):
+    booking = db.get_booking(booking_id)
+    if booking:
+        db.increment_seats(booking["trip_id"], booking["passengers"])
+        db.cancel_booking(booking_id)
+        flash(f"Booking #{booking_id} cancelled.", "success")
+    return redirect(url_for("admin_dashboard"))

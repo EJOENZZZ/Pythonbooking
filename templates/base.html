@@ -27,6 +27,9 @@
     <a class="nav-link" href="{{ url_for('index') }}">🔍 Search</a>
     {% if session.user_id %}
       <a class="nav-link" href="{{ url_for('my_bookings') }}">🎫 My Bookings</a>
+      {% if session.is_admin %}
+        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">🛠️ Admin</a>
+      {% endif %}
       <span class="text-white small">👤 {{ session.user_name }}</span>
       <a class="btn btn-outline-light btn-sm" href="{{ url_for('logout') }}">Logout</a>
     {% else %}

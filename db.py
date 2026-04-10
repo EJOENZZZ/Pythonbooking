@@ -5,8 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-URL = os.environ["SUPABASE_URL"] + "/rest/v1"
-KEY = os.environ["SUPABASE_KEY"]
+URL = os.environ.get("SUPABASE_URL", "") + "/rest/v1"
+KEY = os.environ.get("SUPABASE_KEY", "")
 HEADERS = {
     "apikey": KEY,
     "Authorization": f"Bearer {KEY}",
@@ -41,8 +41,11 @@ def get_user_by_email(email):
     res = _get("users", {"email": f"eq.{email}", "limit": 1})
     return res[0] if res else None
 
+def get_all_users():
+    return _get("users", {"order": "created_at.desc"})
+
 def register_user(full_name, email, password):
-    res = _post("users", {"full_name": full_name, "email": email, "password": hash_password(password)})
+    res = _post("users", {"full_name": full_name, "email": email, "password": hash_password(password), "is_admin": False})
     return res[0] if isinstance(res, list) else res
 
 def login_user(email, password):

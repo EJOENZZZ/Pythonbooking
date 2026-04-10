@@ -10,8 +10,14 @@ create table if not exists users (
   full_name   text not null,
   email       text not null unique,
   password    text not null,
+  is_admin    boolean default false,
   created_at  timestamp default now()
 );
+
+-- Default admin account (username: admin, password: 1234)
+insert into users (full_name, email, password, is_admin) values
+  ('Admin', 'admin', encode(sha256('1234'), 'hex'), true)
+on conflict (email) do nothing;
 
 create index if not exists idx_users_email on users(email);
 
