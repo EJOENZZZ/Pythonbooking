@@ -53,11 +53,18 @@ def signup():
             flash("Email already registered.", "danger")
             return render_template("signup.html")
 
-        user = db.register_user(full_name, email, password)
-        session["user_id"]   = user["id"]
-        session["user_name"] = user["full_name"]
-        flash(f"Welcome, {user['full_name']}!", "success")
-        return redirect(url_for("index"))
+        try:
+            user = db.register_user(full_name, email, password)
+            if not user or not isinstance(user, dict) or "id" not in user:
+                flash(f"Registration failed: {user}", "danger")
+                return render_template("signup.html")
+            session["user_id"]   = user["id"]
+            session["user_name"] = user["full_name"]
+            flash(f"Welcome, {user['full_name']}!", "success")
+            return redirect(url_for("index"))
+        except Exception as e:
+            flash(f"Error: {str(e)}", "danger")
+            return render_template("signup.html")
     return render_template("signup.html")
 
 
@@ -92,14 +99,19 @@ def logout():
 @app.route("/")
 def index():
     try:
-        trips   = db.get_all_trips()
+        trips = db.get_all_trips()
+        if not isinstance(trips, list):
+            raise Exception(f"Supabase error: {trips}")
         origins = sorted(set(t["from_city"] for t in trips))
         dests   = sorted(set(t["to_city"]   for t in trips))
+        flights = [t for t in trips if t["type"] == "plane"]
+        ferries = [t for t in trips if t["type"] == "ferry"]
     except Exception as e:
         app.logger.error(f"DB error on index: {e}")
-        trips, origins, dests = [], [], []
-        flash("Could not load trips. Check your Supabase connection.", "danger")
-    return render_template("index.html", origins=origins, destinations=dests)
+        origins, dests, flights, ferries = [], [], [], []
+        flash(str(e), "danger")
+    return render_template("index.html", origins=origins, destinations=dests,
+                           flights=flights, ferries=ferries)
 
 
 @app.route("/search")
@@ -111,6 +123,7 @@ def search():
     passengers = request.args.get("passengers", "1").strip()
 
     results = db.search_trips(trip_type, origin, dest, date)
+    app.logger.info(f"Search: type={trip_type} from={origin} to={dest} date={date} results={len(results)}")
     return render_template("results.html", results=results, trip_type=trip_type,
                            origin=origin, dest=dest, date=date, passengers=passengers)
 
@@ -228,3 +241,7 @@ def admin_cancel(booking_id):
         db.cancel_booking(booking_id)
         flash(f"Booking #{booking_id} cancelled.", "success")
     return redirect(url_for("admin_dashboard"))
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

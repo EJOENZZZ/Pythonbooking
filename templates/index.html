@@ -2,7 +2,7 @@
 {% block title %}TravelBook — Book Flights & Ferries{% endblock %}
 {% block content %}
 
-<!-- Hero -->
+<!-- Hero Search -->
 <div class="hero-section">
   <div style="position:relative;z-index:1;">
     <p class="hero-eyebrow"><i class="bi bi-geo-alt-fill me-1"></i>Philippines Domestic Travel</p>
@@ -24,21 +24,21 @@
         <div class="row g-3 align-items-end">
           <div class="col-md-3">
             <label class="form-label">From</label>
-            <select name="from" class="form-select" required>
-              <option value="">Origin</option>
+            <select name="from" class="form-select">
+              <option value="">Any Origin</option>
               {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
             </select>
           </div>
           <div class="col-md-3">
             <label class="form-label">To</label>
-            <select name="to" class="form-select" required>
-              <option value="">Destination</option>
+            <select name="to" class="form-select">
+              <option value="">Any Destination</option>
               {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
             </select>
           </div>
           <div class="col-md-2">
             <label class="form-label">Date</label>
-            <input type="date" name="date" class="form-control" required/>
+            <input type="date" name="date" class="form-control"/>
           </div>
           <div class="col-md-2">
             <label class="form-label">Passengers</label>
@@ -55,30 +55,125 @@
   </div>
 </div>
 
-<!-- Features -->
-<div class="row g-4">
+<!-- Available Flights -->
+{% if flights %}
+<div class="mb-5">
+  <div class="section-title"><i class="bi bi-airplane-fill text-primary"></i> Available Flights</div>
+  {% for t in flights %}
+  <div class="result-card">
+    <div class="row align-items-center g-3">
+      <div class="col-md-2 d-flex align-items-center gap-2">
+        <div class="airline-logo">✈️</div>
+        <div>
+          <div class="fw-bold" style="font-size:.9rem;">{{ t.operator }}</div>
+          <span class="badge-plane">Plane</span>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="d-flex align-items-center gap-3">
+          <div class="text-center">
+            <div class="city-name">{{ t.from_city }}</div>
+            <div class="time-label">{{ t.departure[11:16] if t.departure|length > 10 else t.departure }}</div>
+          </div>
+          <div class="flight-line">
+            <div class="flight-line-bar"></div>
+            <div class="duration-label">Direct</div>
+          </div>
+          <div class="text-center">
+            <div class="city-name">{{ t.to_city }}</div>
+            <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
+          </div>
+        </div>
+        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ t.departure[:10] }}</small>
+      </div>
+      <div class="col-md-2 text-center">
+        <span class="seats-pill"><i class="bi bi-person-check me-1"></i>{{ t.seats }} seats</span>
+      </div>
+      <div class="col-md-3 text-end">
+        <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
+        <div class="price-sub mb-2">per passenger</div>
+        <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4">
+          Book Now <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Available Ferries -->
+{% if ferries %}
+<div class="mb-5">
+  <div class="section-title"><i class="bi bi-water text-success"></i> Available Ferries</div>
+  {% for t in ferries %}
+  <div class="result-card">
+    <div class="row align-items-center g-3">
+      <div class="col-md-2 d-flex align-items-center gap-2">
+        <div class="airline-logo">⛴️</div>
+        <div>
+          <div class="fw-bold" style="font-size:.9rem;">{{ t.operator }}</div>
+          <span class="badge-ferry">Ferry</span>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="d-flex align-items-center gap-3">
+          <div class="text-center">
+            <div class="city-name">{{ t.from_city }}</div>
+            <div class="time-label">{{ t.departure[11:16] if t.departure|length > 10 else t.departure }}</div>
+          </div>
+          <div class="flight-line">
+            <div class="flight-line-bar"></div>
+            <div class="duration-label">Direct</div>
+          </div>
+          <div class="text-center">
+            <div class="city-name">{{ t.to_city }}</div>
+            <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
+          </div>
+        </div>
+        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ t.departure[:10] }}</small>
+      </div>
+      <div class="col-md-2 text-center">
+        <span class="seats-pill"><i class="bi bi-person-check me-1"></i>{{ t.seats }} seats</span>
+      </div>
+      <div class="col-md-3 text-end">
+        <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
+        <div class="price-sub mb-2">per passenger</div>
+        <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4">
+          Book Now <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if not flights and not ferries %}
+<div class="row g-4 mt-1">
   <div class="col-md-4">
     <div class="feature-card h-100">
       <div class="feature-icon feature-icon-red mx-auto">✈️</div>
       <h6 class="fw-bold mb-2">Domestic Flights</h6>
-      <p class="text-muted small mb-0">Book seats on top Philippine airlines — AirFast, SkyLine, BlueBird and more.</p>
+      <p class="text-muted small mb-0">Book seats on top Philippine airlines instantly.</p>
     </div>
   </div>
   <div class="col-md-4">
     <div class="feature-card h-100">
       <div class="feature-icon feature-icon-blue mx-auto">⛴️</div>
       <h6 class="fw-bold mb-2">Ferry Routes</h6>
-      <p class="text-muted small mb-0">Island-hop with OceanJet, SuperCat, and 2GO Ferry across the archipelago.</p>
+      <p class="text-muted small mb-0">Island-hop with trusted ferry operators.</p>
     </div>
   </div>
   <div class="col-md-4">
     <div class="feature-card h-100">
       <div class="feature-icon feature-icon-green mx-auto">🎫</div>
       <h6 class="fw-bold mb-2">Instant Confirmation</h6>
-      <p class="text-muted small mb-0">Get your booking reference immediately. No waiting, no hassle.</p>
+      <p class="text-muted small mb-0">Get your booking reference immediately.</p>
     </div>
   </div>
 </div>
+{% endif %}
 
 <script>
   function setType(type) {
