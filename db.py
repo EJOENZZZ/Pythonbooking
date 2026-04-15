@@ -5,30 +5,37 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-URL = os.environ.get("SUPABASE_URL", "") + "/rest/v1"
-KEY = os.environ.get("SUPABASE_KEY", "")
-HEADERS = {
-    "apikey": KEY,
-    "Authorization": f"Bearer {KEY}",
-    "Content-Type": "application/json",
-    "Prefer": "return=representation",
-}
 
+def _headers():
+    key = os.environ.get("SUPABASE_KEY", "")
+    return {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+    }
+
+def _url(table):
+    return os.environ.get("SUPABASE_URL", "") + f"/rest/v1/{table}"
 
 def _get(table, params=None):
-    r = httpx.get(f"{URL}/{table}", headers=HEADERS, params=params)
-    return r.json()
+    r = httpx.get(_url(table), headers=_headers(), params=params)
+    data = r.json()
+    return data if isinstance(data, list) else []
 
 def _post(table, data):
-    r = httpx.post(f"{URL}/{table}", headers=HEADERS, json=data)
-    return r.json()
+    r = httpx.post(_url(table), headers=_headers(), json=data)
+    res = r.json()
+    if isinstance(res, list) and res:
+        return res[0]
+    return res
 
 def _patch(table, match_key, match_val, data):
-    httpx.patch(f"{URL}/{table}", headers=HEADERS, json=data,
+    httpx.patch(_url(table), headers=_headers(), json=data,
                 params={match_key: f"eq.{match_val}"})
 
 def _delete(table, match_key, match_val):
-    httpx.delete(f"{URL}/{table}", headers=HEADERS,
+    httpx.delete(_url(table), headers=_headers(),
                  params={match_key: f"eq.{match_val}"})
 
 
@@ -45,12 +52,16 @@ def get_all_users():
     return _get("users", {"order": "created_at.desc"})
 
 def register_user(full_name, email, password):
-    res = _post("users", {"full_name": full_name, "email": email, "password": hash_password(password), "is_admin": False})
-    return res[0] if isinstance(res, list) else res
+    return _post("users", {
+        "full_name": full_name,
+        "email": email,
+        "password": hash_password(password),
+        "is_admin": False
+    })
 
 def login_user(email, password):
     user = get_user_by_email(email)
-    if user and user["password"] == hash_password(password):
+    if user and isinstance(user, dict) and user.get("password") == hash_password(password):
         return user
     return None
 
@@ -75,11 +86,13 @@ def search_trips(trip_type, origin, dest, date):
 
 def decrement_seats(trip_id, qty):
     trip = get_trip(trip_id)
-    _patch("trips", "id", trip_id, {"seats": trip["seats"] - qty})
+    if trip:
+        _patch("trips", "id", trip_id, {"seats": trip["seats"] - qty})
 
 def increment_seats(trip_id, qty):
     trip = get_trip(trip_id)
-    _patch("trips", "id", trip_id, {"seats": trip["seats"] + qty})
+    if trip:
+        _patch("trips", "id", trip_id, {"seats": trip["seats"] + qty})
 
 
 # ── Bookings ──────────────────────────────────────────────────────────────────
@@ -94,8 +107,7 @@ def get_booking(booking_id):
     return res[0] if res else None
 
 def create_booking(data):
-    res = _post("bookings", data)
-    return res[0] if isinstance(res, list) else res
+    return _post("bookings", data)
 
 def cancel_booking(booking_id):
     _delete("bookings", "id", booking_id)
