@@ -98,23 +98,13 @@
 <footer class="site-footer">
   <div class="container">
     <div class="row align-items-center">
-      <div class="col-md-4 mb-3 mb-md-0">
+      <div class="col-md-6 mb-3 mb-md-0">
         <div class="footer-brand">
           <i class="bi bi-airplane-fill me-1" style="color:var(--primary);"></i>Travel<span>Book</span>
         </div>
         <div class="mt-1 small">Philippines Domestic Travel</div>
       </div>
-      <div class="col-md-4 text-center mb-3 mb-md-0">
-        <a href="{{ url_for('index') }}" class="me-3">Search</a>
-        {% if session.user_id %}
-          <a href="{{ url_for('my_bookings') }}" class="me-3">My Bookings</a>
-          <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-          <a href="{{ url_for('login') }}" class="me-3">Login</a>
-          <a href="{{ url_for('signup') }}">Sign Up</a>
-        {% endif %}
-      </div>
-      <div class="col-md-4 text-md-end small">
+      <div class="col-md-6 text-md-end small">
         © 2025 TravelBook. All rights reserved.
       </div>
     </div>
