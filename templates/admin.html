@@ -1,70 +1,87 @@
 {% extends "base.html" %}
 {% block title %}Admin Dashboard - TravelBook{% endblock %}
 {% block content %}
+
 <div class="d-flex justify-content-between align-items-center mb-4">
-  <h4 class="fw-bold mb-0">🛠️ Admin Dashboard</h4>
-  <span class="badge bg-danger px-3 py-2">Admin: {{ session.user_name }}</span>
+  <div>
+    <h4 class="fw-bold mb-0"><i class="bi bi-shield-lock-fill text-danger me-2"></i>Admin Dashboard</h4>
+    <small class="text-muted">Manage all bookings, users and trips</small>
+  </div>
+  <span class="user-badge" style="background:rgba(230,57,70,.1);color:var(--primary);border:1px solid rgba(230,57,70,.2);">
+    <i class="bi bi-person-fill-gear me-1"></i>{{ session.user_name }}
+  </span>
 </div>
 
 <!-- Stats -->
 <div class="row g-3 mb-4">
-  <div class="col-md-4">
-    <div class="card p-3 text-center">
-      <div class="fs-2 fw-bold text-danger">{{ bookings|length }}</div>
-      <div class="text-muted">Total Bookings</div>
+  <div class="col-md-3">
+    <div class="admin-stat admin-stat-bookings" data-icon="🎫">
+      <div class="stat-num">{{ bookings|length }}</div>
+      <div class="stat-label">Total Bookings</div>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="card p-3 text-center">
-      <div class="fs-2 fw-bold" style="color:#0077b6;">{{ users|length }}</div>
-      <div class="text-muted">Registered Users</div>
+  <div class="col-md-3">
+    <div class="admin-stat admin-stat-users" data-icon="👤">
+      <div class="stat-num">{{ users|length }}</div>
+      <div class="stat-label">Registered Users</div>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="card p-3 text-center">
-      <div class="fs-2 fw-bold" style="color:#2a9d8f;">{{ trips|length }}</div>
-      <div class="text-muted">Available Trips</div>
+  <div class="col-md-3">
+    <div class="admin-stat admin-stat-trips" data-icon="🗺️">
+      <div class="stat-num">{{ trips|length }}</div>
+      <div class="stat-label">Active Trips</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="admin-stat admin-stat-revenue" data-icon="💰">
+      <div class="stat-num">₱{{ "{:,.0f}".format(bookings|sum(attribute='total')) }}</div>
+      <div class="stat-label">Total Revenue</div>
     </div>
   </div>
 </div>
 
 <!-- All Bookings -->
 <div class="card p-4 mb-4">
-  <h5 class="fw-bold mb-3">🎫 All Bookings</h5>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0"><i class="bi bi-ticket-perforated-fill me-2 text-danger"></i>All Bookings</h5>
+    <span class="badge bg-danger rounded-pill">{{ bookings|length }}</span>
+  </div>
   {% if bookings %}
   <div class="table-responsive">
-    <table class="table table-hover align-middle">
+    <table class="table table-hover align-middle mb-0">
       <thead class="table-dark">
         <tr>
-          <th>ID</th><th>Passenger</th><th>Route</th><th>Type</th>
+          <th>Ref</th><th>Passenger</th><th>Route</th><th>Type</th>
           <th>Date</th><th>Pax</th><th>Total</th><th>Status</th><th></th>
         </tr>
       </thead>
       <tbody>
         {% for b in bookings %}
         <tr>
-          <td><code>{{ b.id }}</code></td>
-          <td>{{ b.passenger_name }}<br><small class="text-muted">{{ b.email }}</small></td>
-          <td>{{ b.from_city }} → {{ b.to_city }}</td>
+          <td><code class="text-danger fw-bold">{{ b.id }}</code></td>
           <td>
-            {% if b.type == "plane" %}
-              <span class="badge" style="background:#0077b6;">✈️ Plane</span>
-            {% else %}
-              <span class="badge" style="background:#2a9d8f;">⛴️ Ferry</span>
-            {% endif %}
+            <div class="fw-semibold">{{ b.passenger_name }}</div>
+            <small class="text-muted">{{ b.email }}</small>
           </td>
-          <td>{{ b.departure[:10] }}</td>
-          <td>{{ b.passengers }}</td>
-          <td>₱{{ "%.2f"|format(b.total) }}</td>
+          <td><span class="fw-semibold">{{ b.from_city }}</span> <i class="bi bi-arrow-right text-muted"></i> <span class="fw-semibold">{{ b.to_city }}</span></td>
           <td>
-            <span class="badge {{ 'bg-success' if b.status == 'Confirmed' else 'bg-secondary' }}">
+            {% if b.type == "plane" %}<span class="badge-plane">✈️ Plane</span>
+            {% else %}<span class="badge-ferry">⛴️ Ferry</span>{% endif %}
+          </td>
+          <td><small>{{ b.departure[:10] }}</small></td>
+          <td><span class="fw-semibold">{{ b.passengers }}</span></td>
+          <td class="fw-bold text-danger">₱{{ "%.2f"|format(b.total) }}</td>
+          <td>
+            <span class="badge rounded-pill {{ 'bg-success' if b.status == 'Confirmed' else 'bg-secondary' }}">
               {{ b.status }}
             </span>
           </td>
           <td>
             {% if b.status == "Confirmed" %}
             <form method="post" action="{{ url_for('admin_cancel', booking_id=b.id) }}">
-              <button class="btn btn-sm btn-outline-danger">Cancel</button>
+              <button class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                <i class="bi bi-x-circle me-1"></i>Cancel
+              </button>
             </form>
             {% endif %}
           </td>
@@ -74,39 +91,42 @@
     </table>
   </div>
   {% else %}
-    <p class="text-muted">No bookings yet.</p>
+    <div class="text-center py-4 text-muted"><i class="bi bi-inbox fs-1 d-block mb-2"></i>No bookings yet.</div>
   {% endif %}
 </div>
 
 <!-- All Users -->
 <div class="card p-4">
-  <h5 class="fw-bold mb-3">👤 Registered Users</h5>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="fw-bold mb-0"><i class="bi bi-people-fill me-2" style="color:var(--blue);"></i>Registered Users</h5>
+    <span class="badge rounded-pill" style="background:var(--blue);">{{ users|length }}</span>
+  </div>
   {% if users %}
   <div class="table-responsive">
-    <table class="table table-hover align-middle">
+    <table class="table table-hover align-middle mb-0">
       <thead class="table-dark">
         <tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th></tr>
       </thead>
       <tbody>
         {% for u in users %}
         <tr>
-          <td>{{ u.full_name }}</td>
-          <td>{{ u.email }}</td>
+          <td class="fw-semibold">{{ u.full_name }}</td>
+          <td class="text-muted">{{ u.email }}</td>
           <td>
             {% if u.is_admin %}
-              <span class="badge bg-danger">Admin</span>
+              <span class="badge bg-danger rounded-pill"><i class="bi bi-shield-fill me-1"></i>Admin</span>
             {% else %}
-              <span class="badge bg-secondary">User</span>
+              <span class="badge bg-secondary rounded-pill"><i class="bi bi-person me-1"></i>User</span>
             {% endif %}
           </td>
-          <td>{{ u.created_at[:10] if u.created_at else "-" }}</td>
+          <td><small class="text-muted">{{ u.created_at[:10] if u.created_at else "-" }}</small></td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
   {% else %}
-    <p class="text-muted">No users yet.</p>
+    <div class="text-center py-4 text-muted"><i class="bi bi-people fs-1 d-block mb-2"></i>No users yet.</div>
   {% endif %}
 </div>
 {% endblock %}

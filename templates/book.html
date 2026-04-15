@@ -5,47 +5,77 @@
   <div class="col-lg-7">
 
     <!-- Trip Summary -->
-    <div class="card p-3 mb-4" style="background:#0d1b2a; color:#fff;">
-      <div class="d-flex justify-content-between align-items-center">
+    <div class="trip-summary mb-4">
+      <div class="d-flex justify-content-between align-items-start mb-3">
         <div>
-          <span class="badge bg-light text-dark me-2">
-            {% if trip.type == "plane" %}✈️ Plane{% else %}⛴️ Ferry{% endif %}
-          </span>
-          <strong>{{ trip.airline }}</strong>
+          {% if trip.type == "plane" %}
+            <span class="badge-plane">✈️ Plane</span>
+          {% else %}
+            <span class="badge-ferry">⛴️ Ferry</span>
+          {% endif %}
+          <span class="operator ms-2">{{ trip.operator }}</span>
         </div>
-        <div class="price-tag" style="color:#f4a261;">₱{{ "%.2f"|format(trip.price) }} / pax</div>
+        <div class="price">₱{{ "%.2f"|format(trip.price) }} <small style="font-size:.75rem;opacity:.7;">/ pax</small></div>
       </div>
-      <div class="text-center mt-2">
-        <span class="fs-4 fw-bold">{{ trip.from }}</span>
-        <span class="mx-3">→</span>
-        <span class="fs-4 fw-bold">{{ trip.to }}</span>
+      <div class="d-flex align-items-center gap-3 justify-content-center my-2">
+        <div class="text-center">
+          <div class="route">{{ trip.from_city }}</div>
+          <div style="color:#90a4ae;font-size:.85rem;">{{ trip.departure[11:16] if trip.departure|length > 10 else '' }}</div>
+        </div>
+        <div style="flex:1;border-top:2px dashed rgba(255,255,255,.2);position:relative;">
+          <i class="bi bi-{% if trip.type == 'plane' %}airplane{% else %}water{% endif %}" style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--navy-light);padding:0 6px;font-size:1.1rem;color:#ffd166;"></i>
+        </div>
+        <div class="text-center">
+          <div class="route">{{ trip.to_city }}</div>
+          <div style="color:#90a4ae;font-size:.85rem;">{{ trip.arrival[11:16] if trip.arrival|length > 10 else '' }}</div>
+        </div>
       </div>
-      <div class="text-center text-secondary small mt-1">{{ trip.departure }} → {{ trip.arrival }}</div>
+      <div class="text-center" style="color:#90a4ae;font-size:.85rem;">
+        <i class="bi bi-calendar3 me-1"></i>{{ trip.departure[:10] }}
+      </div>
     </div>
 
     <!-- Booking Form -->
     <div class="card p-4">
-      <h5 class="fw-bold mb-3">Passenger Details</h5>
+      <h5 class="fw-bold mb-4"><i class="bi bi-person-lines-fill me-2 text-danger"></i>Passenger Details</h5>
       <form method="post">
         <div class="mb-3">
           <label class="form-label">Full Name</label>
-          <input type="text" name="name" class="form-control" placeholder="Juan Dela Cruz" required/>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-person text-muted"></i></span>
+            <input type="text" name="name" class="form-control border-start-0" placeholder="Juan Dela Cruz" required/>
+          </div>
         </div>
         <div class="mb-3">
           <label class="form-label">Email Address</label>
-          <input type="email" name="email" class="form-control" placeholder="juan@email.com" required/>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-envelope text-muted"></i></span>
+            <input type="email" name="email" class="form-control border-start-0" placeholder="juan@email.com" required/>
+          </div>
         </div>
         <div class="mb-3">
           <label class="form-label">Phone Number</label>
-          <input type="tel" name="phone" class="form-control" placeholder="+63 9XX XXX XXXX" required/>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-phone text-muted"></i></span>
+            <input type="tel" name="phone" class="form-control border-start-0" placeholder="+63 9XX XXX XXXX" required/>
+          </div>
         </div>
-        <div class="mb-3">
+        <div class="mb-4">
           <label class="form-label">Number of Passengers</label>
-          <input type="number" name="passengers" class="form-control" value="{{ passengers }}" min="1" max="{{ trip.seats }}" required/>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-people text-muted"></i></span>
+            <input type="number" name="passengers" class="form-control border-start-0" value="{{ passengers }}" min="1" max="{{ trip.seats }}" required/>
+          </div>
+          <div class="form-text"><i class="bi bi-info-circle me-1"></i>{{ trip.seats }} seats available</div>
         </div>
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">← Back</a>
-          <button type="submit" class="btn btn-book px-5 fw-bold">Confirm Booking</button>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <a href="{{ url_for('index') }}" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i> Back
+          </a>
+          <button type="submit" class="btn btn-book px-5 py-2 fw-bold">
+            Confirm Booking <i class="bi bi-check-lg ms-1"></i>
+          </button>
         </div>
       </form>
     </div>
