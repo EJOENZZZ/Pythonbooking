@@ -10,36 +10,67 @@
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg">
   <div class="container">
+
+    <!-- Brand -->
     <a class="navbar-brand" href="{{ url_for('index') }}">
       <i class="bi bi-airplane-fill" style="color:var(--primary);"></i>
       Travel<span class="brand-dot">Book</span>
     </a>
-    <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+
+    <!-- Mobile toggle -->
+    <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false">
       <i class="bi bi-list text-white fs-3"></i>
     </button>
+
+    <!-- Nav items -->
     <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav mx-auto gap-1">
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}"><i class="bi bi-search me-1"></i>Search</a></li>
+      <!-- Left links -->
+      <ul class="navbar-nav me-auto align-items-lg-center gap-1 mt-2 mt-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('index') }}">
+            <i class="bi bi-search me-1"></i>Search
+          </a>
+        </li>
         {% if session.user_id %}
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('my_bookings') }}"><i class="bi bi-ticket-perforated me-1"></i>My Bookings</a></li>
-          {% if session.is_admin %}
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-shield-lock me-1"></i>Admin</a></li>
-          {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('my_bookings') }}">
+            <i class="bi bi-ticket-perforated me-1"></i>My Bookings
+          </a>
+        </li>
+        {% if session.is_admin %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+            <i class="bi bi-shield-lock me-1"></i>Admin
+          </a>
+        </li>
+        {% endif %}
         {% endif %}
       </ul>
-      <ul class="navbar-nav align-items-center gap-2">
+
+      <!-- Right links -->
+      <ul class="navbar-nav align-items-lg-center gap-2 mt-2 mt-lg-0">
         {% if session.user_id %}
-          <li class="nav-item"><span class="user-pill"><i class="bi bi-person-circle me-1"></i>{{ session.user_name }}</span></li>
-          <li class="nav-item"><a class="btn-nav-outline" href="{{ url_for('logout') }}">Logout</a></li>
+          <li class="nav-item">
+            <span class="user-pill">
+              <i class="bi bi-person-circle me-1"></i>{{ session.user_name }}
+            </span>
+          </li>
+          <li class="nav-item">
+            <a class="btn-nav-outline" href="{{ url_for('logout') }}">Logout</a>
+          </li>
         {% else %}
-          <li class="nav-item"><a class="btn-nav-outline" href="{{ url_for('login') }}">Log In</a></li>
-          <li class="nav-item"><a class="btn-nav-primary" href="{{ url_for('signup') }}">Sign Up Free</a></li>
+          <li class="nav-item">
+            <a class="btn-nav-outline" href="{{ url_for('login') }}">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn-nav-primary" href="{{ url_for('signup') }}">Sign Up Free</a>
+          </li>
         {% endif %}
       </ul>
     </div>
+
   </div>
 </nav>
 
@@ -68,8 +99,10 @@
   <div class="container">
     <div class="row align-items-center">
       <div class="col-md-4 mb-3 mb-md-0">
-        <div class="footer-brand"><i class="bi bi-airplane-fill me-1" style="color:var(--primary);"></i>Travel<span>Book</span></div>
-        <div class="mt-1">Philippines Domestic Travel</div>
+        <div class="footer-brand">
+          <i class="bi bi-airplane-fill me-1" style="color:var(--primary);"></i>Travel<span>Book</span>
+        </div>
+        <div class="mt-1 small">Philippines Domestic Travel</div>
       </div>
       <div class="col-md-4 text-center mb-3 mb-md-0">
         <a href="{{ url_for('index') }}" class="me-3">Search</a>
@@ -81,7 +114,7 @@
           <a href="{{ url_for('signup') }}">Sign Up</a>
         {% endif %}
       </div>
-      <div class="col-md-4 text-md-end">
+      <div class="col-md-4 text-md-end small">
         © 2025 TravelBook. All rights reserved.
       </div>
     </div>
