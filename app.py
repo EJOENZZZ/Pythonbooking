@@ -103,14 +103,15 @@ def index():
         if not isinstance(trips, list):
             raise Exception(f"Supabase error: {trips}")
         origins = sorted(set(t["from_city"] for t in trips))
-        dests   = sorted(set(t["to_city"]   for t in trips))
+        dests   = sorted(set(t["to_city"] for t in trips))
+        all_cities = sorted(set(origins + dests))
         flights = [t for t in trips if t["type"] == "plane"]
         ferries = [t for t in trips if t["type"] == "ferry"]
     except Exception as e:
         app.logger.error(f"DB error on index: {e}")
-        origins, dests, flights, ferries = [], [], [], []
+        origins, dests, all_cities, flights, ferries = [], [], [], [], []
         flash(str(e), "danger")
-    return render_template("index.html", origins=origins, destinations=dests,
+    return render_template("index.html", origins=all_cities, destinations=all_cities,
                            flights=flights, ferries=ferries)
 
 
