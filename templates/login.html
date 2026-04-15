@@ -1,36 +1,36 @@
 {% extends "base.html" %}
-{% block title %}Login - TravelBook{% endblock %}
+{% block title %}Log In — TravelBook{% endblock %}
 {% block content %}
-<div class="auth-wrapper">
-  <div class="auth-card card">
+<div class="auth-page">
+  <div class="auth-box">
     <div class="text-center mb-4">
-      <div class="auth-icon">✈️</div>
-      <h3 class="auth-title">Welcome Back</h3>
-      <p class="text-muted">Log in to manage your bookings</p>
+      <div class="auth-logo-wrap auth-logo-red"><i class="bi bi-airplane-fill" style="color:var(--primary);font-size:1.6rem;"></i></div>
+      <h2 class="auth-heading">Welcome back</h2>
+      <p class="auth-sub mt-1">Log in to manage your bookings</p>
     </div>
     <form method="post">
       <div class="mb-3">
         <label class="form-label">Email / Username</label>
         <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-envelope text-muted"></i></span>
-          <input type="text" name="email" class="form-control border-start-0" placeholder="juan@email.com" required/>
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input type="text" name="email" class="form-control" placeholder="juan@email.com" required/>
         </div>
       </div>
       <div class="mb-4">
         <label class="form-label">Password</label>
         <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-lock text-muted"></i></span>
-          <input type="password" name="password" class="form-control border-start-0" placeholder="••••••••" required/>
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input type="password" name="password" class="form-control" placeholder="••••••••" required/>
         </div>
       </div>
-      <button type="submit" class="btn btn-book w-100 py-2 fw-bold fs-6">
+      <button type="submit" class="btn btn-primary-custom w-100 py-2 fw-bold">
         <i class="bi bi-box-arrow-in-right me-2"></i>Log In
       </button>
     </form>
-    <div class="auth-divider">or</div>
-    <p class="text-center mb-0 text-muted small">
+    <div class="divider">or</div>
+    <p class="text-center mb-0" style="font-size:.9rem;color:var(--muted);">
       Don't have an account?
-      <a href="{{ url_for('signup') }}" class="fw-semibold" style="color:var(--primary);">Create one free</a>
+      <a href="{{ url_for('signup') }}" style="color:var(--primary);font-weight:700;">Create one free →</a>
     </p>
   </div>
 </div>

@@ -1,75 +1,81 @@
 {% extends "base.html" %}
-{% block title %}Search Tickets - TravelBook{% endblock %}
+{% block title %}TravelBook — Book Flights & Ferries{% endblock %}
 {% block content %}
 
-<div class="hero">
+<!-- Hero -->
+<div class="hero-section">
   <div style="position:relative;z-index:1;">
-    <p class="hero-sub"><i class="bi bi-geo-alt me-1"></i>Philippines Domestic Travel</p>
-    <h1 class="hero-title">Where are you flying today?</h1>
+    <p class="hero-eyebrow"><i class="bi bi-geo-alt-fill me-1"></i>Philippines Domestic Travel</p>
+    <h1 class="hero-title">Book Your Next<br>Trip <span>Instantly</span></h1>
+    <p class="hero-sub">Flights and ferries across the Philippines — fast, easy, reliable.</p>
 
-    <div>
-      <div class="trip-tabs">
-        <button class="trip-tab-btn active" id="plane-tab" onclick="setType('plane')">✈️ &nbsp;Plane</button>
-        <button class="trip-tab-btn" id="ferry-tab" onclick="setType('ferry')">⛴️ &nbsp;Ferry</button>
-      </div>
+    <div class="search-tabs">
+      <button class="search-tab active" id="plane-tab" onclick="setType('plane')">
+        <i class="bi bi-airplane-fill me-1"></i> Plane
+      </button>
+      <button class="search-tab" id="ferry-tab" onclick="setType('ferry')">
+        <i class="bi bi-water me-1"></i> Ferry
+      </button>
     </div>
 
-    <form action="{{ url_for('search') }}" method="get">
-      <input type="hidden" name="type" id="trip_type" value="plane"/>
-      <div class="row g-3">
-        <div class="col-md-3">
-          <label class="form-label text-white-50">From</label>
-          <select name="from" class="form-select" required>
-            <option value="">Select Origin</option>
-            {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
-          </select>
+    <div class="search-form-wrap">
+      <form action="{{ url_for('search') }}" method="get">
+        <input type="hidden" name="type" id="trip_type" value="plane"/>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label class="form-label">From</label>
+            <select name="from" class="form-select" required>
+              <option value="">Origin</option>
+              {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">To</label>
+            <select name="to" class="form-select" required>
+              <option value="">Destination</option>
+              {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Date</label>
+            <input type="date" name="date" class="form-control" required/>
+          </div>
+          <div class="col-md-2">
+            <label class="form-label">Passengers</label>
+            <input type="number" name="passengers" class="form-control" value="1" min="1" max="10" required/>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary-custom w-100 py-2">
+              <i class="bi bi-search me-1"></i> Search
+            </button>
+          </div>
         </div>
-        <div class="col-md-3">
-          <label class="form-label text-white-50">To</label>
-          <select name="to" class="form-select" required>
-            <option value="">Select Destination</option>
-            {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label class="form-label text-white-50">Date</label>
-          <input type="date" name="date" class="form-control" required/>
-        </div>
-        <div class="col-md-2">
-          <label class="form-label text-white-50">Passengers</label>
-          <input type="number" name="passengers" class="form-control" value="1" min="1" max="10" required/>
-        </div>
-        <div class="col-md-2 d-flex align-items-end">
-          <button type="submit" class="btn btn-book w-100 py-2 fw-bold">
-            <i class="bi bi-search me-1"></i> Search
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 
 <!-- Features -->
-<div class="row g-4 mt-1">
+<div class="row g-4">
   <div class="col-md-4">
-    <div class="card p-4 text-center h-100">
-      <div style="font-size:2.2rem;margin-bottom:.5rem;">✈️</div>
-      <h6 class="fw-bold">Domestic Flights</h6>
-      <p class="text-muted small mb-0">Book seats on top Philippine airlines instantly</p>
+    <div class="feature-card h-100">
+      <div class="feature-icon feature-icon-red mx-auto">✈️</div>
+      <h6 class="fw-bold mb-2">Domestic Flights</h6>
+      <p class="text-muted small mb-0">Book seats on top Philippine airlines — AirFast, SkyLine, BlueBird and more.</p>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="card p-4 text-center h-100">
-      <div style="font-size:2.2rem;margin-bottom:.5rem;">⛴️</div>
-      <h6 class="fw-bold">Ferry Routes</h6>
-      <p class="text-muted small mb-0">Island-hop with trusted ferry operators</p>
+    <div class="feature-card h-100">
+      <div class="feature-icon feature-icon-blue mx-auto">⛴️</div>
+      <h6 class="fw-bold mb-2">Ferry Routes</h6>
+      <p class="text-muted small mb-0">Island-hop with OceanJet, SuperCat, and 2GO Ferry across the archipelago.</p>
     </div>
   </div>
   <div class="col-md-4">
-    <div class="card p-4 text-center h-100">
-      <div style="font-size:2.2rem;margin-bottom:.5rem;">🎫</div>
-      <h6 class="fw-bold">Instant Booking</h6>
-      <p class="text-muted small mb-0">Confirm your seat in seconds, no hassle</p>
+    <div class="feature-card h-100">
+      <div class="feature-icon feature-icon-green mx-auto">🎫</div>
+      <h6 class="fw-bold mb-2">Instant Confirmation</h6>
+      <p class="text-muted small mb-0">Get your booking reference immediately. No waiting, no hassle.</p>
     </div>
   </div>
 </div>
