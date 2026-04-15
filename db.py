@@ -75,7 +75,9 @@ def get_trip(trip_id):
     return res[0] if res else None
 
 def search_trips(trip_type, origin, dest, date):
-    params = {"type": f"eq.{trip_type}", "order": "departure.asc"}
+    params = {"order": "departure.asc"}
+    if trip_type:
+        params["type"] = f"eq.{trip_type}"
     if origin:
         params["from_city"] = f"ilike.{origin}"
     if dest:
@@ -83,7 +85,6 @@ def search_trips(trip_type, origin, dest, date):
     if date:
         params["departure"] = f"gte.{date}T00:00:00"
     results = _get("trips", params)
-    # filter seats > 0 in Python to avoid Supabase filter issues
     return [t for t in results if t.get("seats", 0) > 0]
 
 def decrement_seats(trip_id, qty):
