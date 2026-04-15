@@ -91,9 +91,14 @@ def logout():
 # ── Main Routes ───────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
-    trips   = db.get_all_trips()
-    origins = sorted(set(t["from_city"] for t in trips))
-    dests   = sorted(set(t["to_city"]   for t in trips))
+    try:
+        trips   = db.get_all_trips()
+        origins = sorted(set(t["from_city"] for t in trips))
+        dests   = sorted(set(t["to_city"]   for t in trips))
+    except Exception as e:
+        app.logger.error(f"DB error on index: {e}")
+        trips, origins, dests = [], [], []
+        flash("Could not load trips. Check your Supabase connection.", "danger")
     return render_template("index.html", origins=origins, destinations=dests)
 
 
@@ -190,7 +195,19 @@ def cancel(booking_id):
     return redirect(url_for("my_bookings"))
 
 
-# Vercel needs the app object exposed at module level
+# ── Error Handlers ───────────────────────────────────────────────────────────
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("error.html", code=404, msg="Page not found."), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template("error.html", code=500, msg=str(e)), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    app.logger.error(f"Unhandled exception: {e}")
+    return render_template("error.html", code=500, msg=str(e)), 500
 
 
 # ── Admin Routes ──────────────────────────────────────────────────────────────
