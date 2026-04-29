@@ -19,12 +19,14 @@ if os.environ.get("VERCEL") is None:
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "transport_booking_key")
 
-app.config["MAIL_SERVER"]   = "smtp.gmail.com"
-app.config["MAIL_PORT"]     = 587
-app.config["MAIL_USE_TLS"]  = True
-app.config["MAIL_USERNAME"] = "ellajoylocahinherra5@gmail.com"
-app.config["MAIL_PASSWORD"] = "uvzbczopvdymfkam"
-app.config["MAIL_DEFAULT_SENDER"] = "ellajoylocahinherra5@gmail.com"
+app.config["MAIL_SERVER"]        = "smtp.gmail.com"
+app.config["MAIL_PORT"]          = 587
+app.config["MAIL_USE_TLS"]       = True
+app.config["MAIL_USE_SSL"]       = False
+app.config["MAIL_DEBUG"]         = False
+app.config["MAIL_USERNAME"]      = "ellajoylocahinherra5@gmail.com"
+app.config["MAIL_PASSWORD"]      = "uvzbczopvdymfkam"
+app.config["MAIL_DEFAULT_SENDER"]= ("TravelBook", "ellajoylocahinherra5@gmail.com")
 mail = Mail(app)
 
 
