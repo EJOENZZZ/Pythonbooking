@@ -59,8 +59,9 @@ def signup():
             if not user or not isinstance(user, dict) or "id" not in user:
                 flash(f"Registration failed: {user}", "danger")
                 return render_template("signup.html")
-            session["user_id"]   = user["id"]
-            session["user_name"] = user["full_name"]
+            session["user_id"]    = user["id"]
+            session["user_name"]  = user["full_name"]
+            session["user_email"] = email
             flash(f"Welcome, {user['full_name']}!", "success")
             return redirect(url_for("index"))
         except Exception as e:
@@ -78,9 +79,10 @@ def login():
         password = request.form.get("password", "").strip()
         user = db.login_user(email, password)
         if user:
-            session["user_id"]   = user["id"]
-            session["user_name"] = user["full_name"]
-            session["is_admin"]  = user.get("is_admin", False)
+            session["user_id"]    = user["id"]
+            session["user_name"]  = user["full_name"]
+            session["user_email"] = email
+            session["is_admin"]   = user.get("is_admin", False)
             flash(f"Welcome back, {user['full_name']}!", "success")
             if user.get("is_admin"):
                 return redirect(url_for("admin_dashboard"))
