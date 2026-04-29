@@ -32,6 +32,11 @@
         {% if session.user_id %}
         {% if not session.is_admin %}
         <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('index') }}">
+            <i class="bi bi-house me-1"></i>Home
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="{{ url_for('my_bookings') }}">
             <i class="bi bi-ticket-perforated me-1"></i>My Bookings
           </a>
