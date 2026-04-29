@@ -345,9 +345,9 @@ body {
 
 /* Footer */
 .site-footer {
-  background: linear-gradient(rgba(10,22,40,.96), rgba(10,22,40,.96)),
+  background: linear-gradient(rgba(10,22,40,.75), rgba(10,22,40,.75)),
               url('https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1400&q=80') center/cover no-repeat;
-  color: #475569;
+  color: #94a3b8;
   padding: 2rem 0;
   margin-top: 5rem;
   font-size: .85rem;
