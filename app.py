@@ -40,7 +40,10 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from dotenv import load_dotenv
 import db
 
-load_dotenv()
+
+# Only load .env locally (not in Vercel)
+if os.environ.get("VERCEL") is None:
+    load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "transport_booking_key")
@@ -277,6 +280,12 @@ def admin_cancel(booking_id):
         flash(f"Booking #{booking_id} cancelled.", "success")
     return redirect(url_for("admin_dashboard"))
 
+
+
+# Health check route for Vercel debugging
+@app.route("/healthz")
+def healthz():
+    return "ok", 200
 
 if __name__ == "__main__":
     app.run(debug=True)

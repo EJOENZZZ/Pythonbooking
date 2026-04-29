@@ -1,3 +1,11 @@
+import os
+import hashlib
+import httpx
+from dotenv import load_dotenv
+
+# Only load .env locally (not on Vercel)
+if os.environ.get("VERCEL") is None:
+    load_dotenv()
 def update_trip(trip_id, data):
     _patch("trips", "id", trip_id, data)
 
@@ -6,12 +14,6 @@ def delete_trip(trip_id):
 
 def delete_user(user_id):
     _delete("users", "id", user_id)
-import os
-import hashlib
-import httpx
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 def _headers():
