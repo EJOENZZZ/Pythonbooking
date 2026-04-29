@@ -81,16 +81,22 @@ create policy "Public can update bookings" on bookings for update using (true);
 
 -- ── 4. SEED TRIPS DATA ────────────────────────────────────────
 insert into trips (id, type, from_city, to_city, departure, arrival, operator, price, seats) values
-  ('F1','plane','Manila',   'Cebu',     '2025-08-10 06:00','2025-08-10 07:10','AirFast',   2500.00, 120),
-  ('F2','plane','Manila',   'Davao',    '2025-08-10 08:00','2025-08-10 09:30','SkyLine',   3200.00, 100),
-  ('F3','plane','Cebu',     'Manila',   '2025-08-11 14:00','2025-08-11 15:10','AirFast',   2600.00,  90),
-  ('F4','plane','Davao',    'Manila',   '2025-08-12 10:00','2025-08-12 11:30','BlueBird',  3100.00,  80),
-  ('F5','plane','Manila',   'Iloilo',   '2025-08-13 07:00','2025-08-13 08:00','SkyLine',   2800.00, 110),
-  ('F6','plane','Iloilo',   'Manila',   '2025-08-14 15:00','2025-08-14 16:00','BlueBird',  2750.00,  95),
-  ('V1','ferry','Batangas', 'Calapan',  '2025-08-10 07:00','2025-08-10 09:00','OceanJet',   350.00, 200),
-  ('V2','ferry','Cebu',     'Bohol',    '2025-08-10 08:30','2025-08-10 09:30','SuperCat',   280.00, 150),
-  ('V3','ferry','Manila',   'Batangas', '2025-08-11 06:00','2025-08-11 09:00','2GO Ferry',  500.00, 180),
-  ('V4','ferry','Bohol',    'Cebu',     '2025-08-12 15:00','2025-08-12 16:00','OceanJet',   290.00, 160),
-  ('V5','ferry','Cebu',     'Dumaguete','2025-08-13 09:00','2025-08-13 11:30','SuperCat',   320.00, 140),
-  ('V6','ferry','Dumaguete','Cebu',     '2025-08-14 13:00','2025-08-14 15:30','OceanJet',   310.00, 140)
+  ('F1','plane','Manila',   'Cebu',     '2025-08-10 06:00','2025-08-10 07:10','Cebu Pacific',  2500.00, 120),
+  ('F2','plane','Manila',   'Davao',    '2025-08-10 08:00','2025-08-10 09:30','Philippine Airlines', 3200.00, 100),
+  ('F3','plane','Cebu',     'Manila',   '2025-08-11 14:00','2025-08-11 15:10','Cebu Pacific',  2600.00,  90),
+  ('F4','plane','Davao',    'Manila',   '2025-08-12 10:00','2025-08-12 11:30','AirAsia Philippines', 3100.00, 80),
+  ('F5','plane','Manila',   'Iloilo',   '2025-08-13 07:00','2025-08-13 08:00','Philippine Airlines', 2800.00, 110),
+  ('F6','plane','Iloilo',   'Manila',   '2025-08-14 15:00','2025-08-14 16:00','Cebu Pacific',  2750.00,  95),
+  ('F7','plane','Manila',   'Bacolod',  '2025-08-10 09:00','2025-08-10 10:00','AirAsia Philippines', 2600.00, 100),
+  ('F8','plane','Cebu',     'Davao',    '2025-08-11 07:00','2025-08-11 08:10','Cebu Pacific',  2200.00,  90),
+  ('V1','ferry','Batangas', 'Calapan',  '2025-08-10 07:00','2025-08-10 09:00','Oceanjet',       350.00, 200),
+  ('V2','ferry','Cebu',     'Bohol',    '2025-08-10 08:30','2025-08-10 09:30','SuperCat',       280.00, 150),
+  ('V3','ferry','Manila',   'Batangas', '2025-08-11 06:00','2025-08-11 09:00','2GO Travel',     500.00, 180),
+  ('V4','ferry','Bohol',    'Cebu',     '2025-08-12 15:00','2025-08-12 16:00','Oceanjet',       290.00, 160),
+  ('V5','ferry','Cebu',     'Dumaguete','2025-08-13 09:00','2025-08-13 11:30','SuperCat',       320.00, 140),
+  ('V6','ferry','Dumaguete','Cebu',     '2025-08-14 13:00','2025-08-14 15:30','Oceanjet',       310.00, 140),
+  ('V7','ferry','Manila',   'Calapan',  '2025-08-10 06:00','2025-08-10 09:00','2GO Travel',     450.00, 180),
+  ('V8','ferry','Calapan',  'Manila',   '2025-08-10 12:00','2025-08-10 15:00','Oceanjet',       450.00, 180),
+  ('V9','ferry','Batangas', 'Puerto Princesa','2025-08-11 08:00','2025-08-11 16:00','2GO Travel', 800.00, 150),
+  ('V10','ferry','Manila',  'Cebu',     '2025-08-12 18:00','2025-08-13 06:00','2GO Travel',     900.00, 200)
 on conflict (id) do nothing;
