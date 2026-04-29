@@ -1,6 +1,7 @@
 import os
 import hashlib
 import httpx
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 if os.environ.get("VERCEL") is None:
@@ -71,12 +72,36 @@ def delete_user(user_id):
 
 
 # ── Trips ─────────────────────────────────────────────────────────────────────
+def _advance_trip(trip):
+    """If departure is in the past, advance it to the next future date keeping the same time."""
+    if not trip or not trip.get("departure"):
+        return trip
+    try:
+        dep = datetime.fromisoformat(trip["departure"])
+        arr = datetime.fromisoformat(trip["arrival"]) if trip.get("arrival") else None
+        now = datetime.now()
+        if dep < now:
+            duration = (arr - dep) if arr else timedelta(hours=1)
+            # Advance to today with same time; if still past, use tomorrow
+            new_dep = dep.replace(year=now.year, month=now.month, day=now.day)
+            if new_dep < now:
+                new_dep += timedelta(days=1)
+            new_arr = new_dep + duration if arr else None
+            trip = dict(trip)
+            trip["departure"] = new_dep.strftime("%Y-%m-%dT%H:%M:%S")
+            if new_arr:
+                trip["arrival"] = new_arr.strftime("%Y-%m-%dT%H:%M:%S")
+    except Exception:
+        pass
+    return trip
+
 def get_all_trips():
-    return _get("trips", {"order": "departure.asc"})
+    trips = _get("trips", {"order": "departure.asc"})
+    return [_advance_trip(t) for t in trips]
 
 def get_trip(trip_id):
     res = _get("trips", {"id": f"eq.{trip_id}", "limit": 1})
-    return res[0] if res else None
+    return _advance_trip(res[0]) if res else None
 
 def search_trips(trip_type, origin, dest, date):
     params = {"order": "departure.asc"}
@@ -86,10 +111,11 @@ def search_trips(trip_type, origin, dest, date):
         params["from_city"] = f"ilike.{origin}"
     if dest:
         params["to_city"] = f"ilike.{dest}"
-    if date:
-        params["departure"] = f"gte.{date}T00:00:00"
     results = _get("trips", params)
-    return [t for t in results if t.get("seats", 0) > 0]
+    trips = [_advance_trip(t) for t in results if t.get("seats", 0) > 0]
+    if date:
+        trips = [t for t in trips if t["departure"][:10] >= date]
+    return trips
 
 def create_trip(data):
     return _post("trips", data)
