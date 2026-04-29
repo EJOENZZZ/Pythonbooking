@@ -2,7 +2,6 @@
 {% block title %}TravelBook — Book Flights & Ferries{% endblock %}
 {% block content %}
 
-<!-- Hero Search -->
 <div class="hero-section">
   <div style="position:relative;z-index:1;">
     <p class="hero-eyebrow"><i class="bi bi-geo-alt-fill me-1"></i>Philippines Domestic Travel</p>
@@ -10,220 +9,168 @@
     <p class="hero-sub">Flights and ferries across the Philippines — fast, easy, reliable.</p>
 
     <div class="search-tabs">
-      <button class="search-tab active" id="all-tab" onclick="setType('')">
-        <i class="bi bi-grid me-1"></i> All
-      </button>
-      <button class="search-tab" id="plane-tab" onclick="setType('plane')">
-        <i class="bi bi-airplane-fill me-1"></i> Plane
-      </button>
-      <button class="search-tab" id="ferry-tab" onclick="setType('ferry')">
-        <i class="bi bi-water me-1"></i> Ferry
-      </button>
+      <button class="search-tab active" id="all-tab" onclick="setType('')"><i class="bi bi-grid me-1"></i> All</button>
+      <button class="search-tab" id="plane-tab" onclick="setType('plane')"><i class="bi bi-airplane-fill me-1"></i> Plane</button>
+      <button class="search-tab" id="ferry-tab" onclick="setType('ferry')"><i class="bi bi-water me-1"></i> Ferry</button>
     </div>
 
     <div class="search-form-wrap">
-      <form action="{{ url_for('search') }}" method="get">
-        <input type="hidden" name="type" id="trip_type" value=""/>
-        <div class="row g-3 align-items-end">
-          <div class="col-md-3">
-            <label class="form-label">From</label>
-            <select name="from" id="filter-from" class="form-select" onchange="updateDates()">
-              <option value="">Any Origin</option>
-              {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">To</label>
-            <select name="to" id="filter-to" class="form-select" onchange="updateDates()">
-              <option value="">Any Destination</option>
-              {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
-            </select>
-          </div>
-          <div class="col-md-2">
-            <label class="form-label">Date</label>
-            <select name="date" id="filter-date" class="form-select">
-              <option value="">Any Date</option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <label class="form-label">Passengers</label>
-            <input type="number" name="passengers" class="form-control" value="1" min="1" max="10" required/>
-          </div>
-          <div class="col-md-2">
-            <button type="submit" class="btn btn-primary-custom w-100 py-2">
-              <i class="bi bi-search me-1"></i> Search
-            </button>
-          </div>
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label">From</label>
+          <select id="f-from" class="form-select" onchange="updateDates(); filterTrips()">
+            <option value="">Any Origin</option>
+            {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
+          </select>
         </div>
-      </form>
+        <div class="col-md-3">
+          <label class="form-label">To</label>
+          <select id="f-to" class="form-select" onchange="updateDates(); filterTrips()">
+            <option value="">Any Destination</option>
+            {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Date</label>
+          <select id="f-date" class="form-select" onchange="filterTrips()">
+            <option value="">Any Date</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Passengers</label>
+          <input type="number" id="f-pax" class="form-control" value="1" min="1" max="10"/>
+        </div>
+        <div class="col-md-2">
+          <button onclick="filterTrips(true)" class="btn btn-primary-custom w-100 py-2">
+            <i class="bi bi-search me-1"></i> Search
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Trip dates data for JS -->
+<!-- All trips data -->
 <script>
-  const tripDates = [
-    {% for t in flights + ferries %}
-    { type: "{{ t.type }}", from: "{{ t.from_city }}", to: "{{ t.to_city }}", date: "{{ t.departure[:10] }}" },
-    {% endfor %}
-  ];
+const TRIPS = [
+  {% for t in flights + ferries %}{
+    id:"{{ t.id }}", type:"{{ t.type }}", operator:"{{ t.operator }}",
+    from_city:"{{ t.from_city }}", to_city:"{{ t.to_city }}",
+    departure:"{{ t.departure }}", arrival:"{{ t.arrival }}",
+    price:{{ t.price }}, seats:{{ t.seats }}
+  },{% endfor %}
+];
 
-  let activeType = '';
+let activeType = '';
 
-  function setType(type) {
-    activeType = type;
-    document.getElementById('trip_type').value = type;
-    document.getElementById('all-tab').classList.toggle('active', type === '');
-    document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
-    document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
-    var flights = document.getElementById('section-flights');
-    var ferries = document.getElementById('section-ferries');
-    if (flights) flights.style.display = (type === 'ferry') ? 'none' : '';
-    if (ferries) ferries.style.display = (type === 'plane') ? 'none' : '';
-    updateDates();
-  }
-
-  function updateDates() {
-    const from = document.getElementById('filter-from').value;
-    const to = document.getElementById('filter-to').value;
-    const dateSel = document.getElementById('filter-date');
-
-    const dates = [...new Set(
-      tripDates
-        .filter(t =>
-          (!activeType || t.type === activeType) &&
-          (!from || t.from === from) &&
-          (!to || t.to === to)
-        )
-        .map(t => t.date)
-        .sort()
-    )];
-
-    dateSel.innerHTML = '<option value="">Any Date</option>' +
-      dates.map(d => `<option value="${d}">${d}</option>`).join('');
-  }
-
+function setType(type) {
+  activeType = type;
+  ['all','plane','ferry'].forEach(t => document.getElementById(t+'-tab').classList.toggle('active', t === (type||'all')));
   updateDates();
+  filterTrips();
+}
+
+function updateDates() {
+  const from = document.getElementById('f-from').value;
+  const to   = document.getElementById('f-to').value;
+  const sel  = document.getElementById('f-date');
+  const prev = sel.value;
+  const dates = [...new Set(
+    TRIPS.filter(t =>
+      (!activeType || t.type === activeType) &&
+      (!from || t.from_city === from) &&
+      (!to   || t.to_city   === to)
+    ).map(t => t.departure.slice(0,10)).sort()
+  )];
+  sel.innerHTML = '<option value="">Any Date</option>' +
+    dates.map(d => `<option value="${d}"${d===prev?' selected':''}>${d}</option>`).join('');
+}
+
+function filterTrips(scroll) {
+  const from = document.getElementById('f-from').value;
+  const to   = document.getElementById('f-to').value;
+  const date = document.getElementById('f-date').value;
+  const pax  = document.getElementById('f-pax').value || 1;
+
+  const filtered = TRIPS.filter(t =>
+    (!activeType || t.type === activeType) &&
+    (!from || t.from_city === from) &&
+    (!to   || t.to_city   === to) &&
+    (!date || t.departure.slice(0,10) === date)
+  );
+
+  const flights = filtered.filter(t => t.type === 'plane');
+  const ferries = filtered.filter(t => t.type === 'ferry');
+
+  const fw = document.getElementById('flights-wrap');
+  const sw = document.getElementById('ferries-wrap');
+  const nr = document.getElementById('no-results');
+
+  fw.style.display = (activeType === 'ferry' || !flights.length) ? 'none' : '';
+  sw.style.display = (activeType === 'plane' || !ferries.length) ? 'none' : '';
+  nr.style.display = filtered.length ? 'none' : '';
+
+  document.getElementById('flights-list').innerHTML = flights.map(t => card(t, pax)).join('');
+  document.getElementById('ferries-list').innerHTML = ferries.map(t => card(t, pax)).join('');
+
+  if (scroll && filtered.length) document.getElementById('results-section').scrollIntoView({behavior:'smooth'});
+}
+
+function card(t, pax) {
+  const dep = t.departure.length > 10 ? t.departure.slice(11,16) : '';
+  const arr = t.arrival.length > 10   ? t.arrival.slice(11,16)   : '';
+  const date = t.departure.slice(0,10);
+  const icon  = t.type === 'plane' ? '✈️' : '⛴️';
+  const badge = t.type === 'plane'
+    ? '<span class="badge-plane">Plane</span>'
+    : '<span class="badge-ferry">Ferry</span>';
+  return `<div class="result-card">
+    <div class="row align-items-center g-3">
+      <div class="col-md-2 d-flex align-items-center gap-2">
+        <div class="airline-logo">${icon}</div>
+        <div><div class="fw-bold" style="font-size:.9rem;">${t.operator}</div>${badge}</div>
+      </div>
+      <div class="col-md-5">
+        <div class="d-flex align-items-center gap-3">
+          <div class="text-center"><div class="city-name">${t.from_city}</div><div class="time-label">${dep}</div></div>
+          <div class="flight-line"><div class="flight-line-bar"></div><div class="duration-label">Direct</div></div>
+          <div class="text-center"><div class="city-name">${t.to_city}</div><div class="time-label">${arr}</div></div>
+        </div>
+        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>${date}</small>
+      </div>
+      <div class="col-md-2 text-center">
+        <span class="seats-pill"><i class="bi bi-person-check me-1"></i>${t.seats} seats</span>
+      </div>
+      <div class="col-md-3 text-end">
+        <div class="price-big">₱${t.price.toFixed(2)}</div>
+        <div class="price-sub mb-2">per passenger</div>
+        <a href="/book/${t.id}?passengers=${pax}" class="btn btn-primary-custom btn-sm px-4">
+          Book Now <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+      </div>
+    </div>
+  </div>`;
+}
+
+updateDates();
+filterTrips();
 </script>
 
-<!-- Available Flights -->
-{% if flights %}
-<div class="mb-5" id="section-flights">
-  <div class="section-title"><i class="bi bi-airplane-fill text-primary"></i> Available Flights</div>
-  {% for t in flights %}
-  <div class="result-card">
-    <div class="row align-items-center g-3">
-      <div class="col-md-2 d-flex align-items-center gap-2">
-        <div class="airline-logo">✈️</div>
-        <div>
-          <div class="fw-bold" style="font-size:.9rem;">{{ t.operator }}</div>
-          <span class="badge-plane">Plane</span>
-        </div>
-      </div>
-      <div class="col-md-5">
-        <div class="d-flex align-items-center gap-3">
-          <div class="text-center">
-            <div class="city-name">{{ t.from_city }}</div>
-            <div class="time-label">{{ t.departure[11:16] if t.departure|length > 10 else t.departure }}</div>
-          </div>
-          <div class="flight-line">
-            <div class="flight-line-bar"></div>
-            <div class="duration-label">Direct</div>
-          </div>
-          <div class="text-center">
-            <div class="city-name">{{ t.to_city }}</div>
-            <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
-          </div>
-        </div>
-        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ t.departure[:10] }}</small>
-      </div>
-      <div class="col-md-2 text-center">
-        <span class="seats-pill"><i class="bi bi-person-check me-1"></i>{{ t.seats }} seats</span>
-      </div>
-      <div class="col-md-3 text-end">
-        <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
-        <div class="price-sub mb-2">per passenger</div>
-        <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4">
-          Book Now <i class="bi bi-arrow-right ms-1"></i>
-        </a>
-      </div>
-    </div>
+<div id="results-section">
+  <div id="flights-wrap" class="mb-5">
+    <div class="section-title"><i class="bi bi-airplane-fill text-primary"></i> Available Flights</div>
+    <div id="flights-list"></div>
   </div>
-  {% endfor %}
-</div>
-{% endif %}
-
-<!-- Available Ferries -->
-{% if ferries %}
-<div class="mb-5" id="section-ferries">
-  <div class="section-title"><i class="bi bi-water text-success"></i> Available Ferries</div>
-  {% for t in ferries %}
-  <div class="result-card">
-    <div class="row align-items-center g-3">
-      <div class="col-md-2 d-flex align-items-center gap-2">
-        <div class="airline-logo">⛴️</div>
-        <div>
-          <div class="fw-bold" style="font-size:.9rem;">{{ t.operator }}</div>
-          <span class="badge-ferry">Ferry</span>
-        </div>
-      </div>
-      <div class="col-md-5">
-        <div class="d-flex align-items-center gap-3">
-          <div class="text-center">
-            <div class="city-name">{{ t.from_city }}</div>
-            <div class="time-label">{{ t.departure[11:16] if t.departure|length > 10 else t.departure }}</div>
-          </div>
-          <div class="flight-line">
-            <div class="flight-line-bar"></div>
-            <div class="duration-label">Direct</div>
-          </div>
-          <div class="text-center">
-            <div class="city-name">{{ t.to_city }}</div>
-            <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
-          </div>
-        </div>
-        <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ t.departure[:10] }}</small>
-      </div>
-      <div class="col-md-2 text-center">
-        <span class="seats-pill"><i class="bi bi-person-check me-1"></i>{{ t.seats }} seats</span>
-      </div>
-      <div class="col-md-3 text-end">
-        <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
-        <div class="price-sub mb-2">per passenger</div>
-        <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4">
-          Book Now <i class="bi bi-arrow-right ms-1"></i>
-        </a>
-      </div>
-    </div>
+  <div id="ferries-wrap" class="mb-5">
+    <div class="section-title"><i class="bi bi-water text-success"></i> Available Ferries</div>
+    <div id="ferries-list"></div>
   </div>
-  {% endfor %}
-</div>
-{% endif %}
-
-{% if not flights and not ferries %}
-<div class="row g-4 mt-1">
-  <div class="col-md-4">
-    <div class="feature-card h-100">
-      <div class="feature-icon feature-icon-red mx-auto">✈️</div>
-      <h6 class="fw-bold mb-2">Domestic Flights</h6>
-      <p class="text-muted small mb-0">Book seats on top Philippine airlines instantly.</p>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="feature-card h-100">
-      <div class="feature-icon feature-icon-blue mx-auto">⛴️</div>
-      <h6 class="fw-bold mb-2">Ferry Routes</h6>
-      <p class="text-muted small mb-0">Island-hop with trusted ferry operators.</p>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div class="feature-card h-100">
-      <div class="feature-icon feature-icon-green mx-auto">🎫</div>
-      <h6 class="fw-bold mb-2">Instant Confirmation</h6>
-      <p class="text-muted small mb-0">Get your booking reference immediately.</p>
+  <div id="no-results" style="display:none;">
+    <div class="empty-state">
+      <div class="empty-icon">✈️</div>
+      <p class="text-muted">No trips available for this route.</p>
     </div>
   </div>
 </div>
-{% endif %}
 
 {% endblock %}
