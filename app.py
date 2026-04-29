@@ -1,8 +1,10 @@
 import os
 import uuid
+import random
 from datetime import datetime
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask_mail import Mail, Message
 from dotenv import load_dotenv
 import db
 
@@ -16,6 +18,14 @@ if os.environ.get("VERCEL") is None:
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "transport_booking_key")
+
+app.config["MAIL_SERVER"]   = "smtp.gmail.com"
+app.config["MAIL_PORT"]     = 587
+app.config["MAIL_USE_TLS"]  = True
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_USERNAME")
+mail = Mail(app)
 
 
 # ── Auth guard ────────────────────────────────────────────────────────────────
@@ -223,6 +233,66 @@ def cancel(booking_id):
     else:
         flash("Booking not found.", "danger")
     return redirect(url_for("my_bookings"))
+
+
+# ── Forgot Password ──────────────────────────────────────────────────────────
+@app.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip()
+        user = db.get_user_by_email(email)
+        if not user:
+            flash("No account found with that email.", "danger")
+            return render_template("forgot_password.html")
+        code = str(random.randint(100000, 999999))
+        session["reset_code"]  = code
+        session["reset_email"] = email
+        try:
+            msg = Message("TravelBook — Password Reset Code",
+                          recipients=[email])
+            msg.body = f"Your password reset code is: {code}\n\nThis code expires when you close your browser."
+            mail.send(msg)
+            flash("A reset code has been sent to your email.", "success")
+            return redirect(url_for("verify_code"))
+        except Exception as e:
+            flash(f"Failed to send email: {str(e)}", "danger")
+    return render_template("forgot_password.html")
+
+
+@app.route("/verify-code", methods=["GET", "POST"])
+def verify_code():
+    if "reset_email" not in session:
+        return redirect(url_for("forgot_password"))
+    if request.method == "POST":
+        code = request.form.get("code", "").strip()
+        if code == session.get("reset_code"):
+            session["reset_verified"] = True
+            return redirect(url_for("reset_password"))
+        flash("Invalid code. Please try again.", "danger")
+    return render_template("verify_code.html")
+
+
+@app.route("/reset-password", methods=["GET", "POST"])
+def reset_password():
+    if not session.get("reset_verified"):
+        return redirect(url_for("forgot_password"))
+    if request.method == "POST":
+        password = request.form.get("password", "").strip()
+        confirm  = request.form.get("confirm", "").strip()
+        if not password:
+            flash("Password cannot be empty.", "danger")
+            return render_template("reset_password.html")
+        if password != confirm:
+            flash("Passwords do not match.", "danger")
+            return render_template("reset_password.html")
+        email = session.get("reset_email")
+        db.update_password(email, password)
+        session.pop("reset_code", None)
+        session.pop("reset_email", None)
+        session.pop("reset_verified", None)
+        flash("Password updated! Please log in.", "success")
+        return redirect(url_for("login"))
+    return render_template("reset_password.html")
 
 
 # ── Error Handlers ────────────────────────────────────────────────────────────

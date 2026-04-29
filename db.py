@@ -70,6 +70,9 @@ def login_user(email, password):
 def delete_user(user_id):
     _delete("users", "id", user_id)
 
+def update_password(email, new_password):
+    _patch("users", "email", email, {"password": hash_password(new_password)})
+
 
 # ── Trips ─────────────────────────────────────────────────────────────────────
 def _expand_trip(trip, days=14):
