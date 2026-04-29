@@ -98,10 +98,8 @@ def _expand_trip(trip, days=14):
 
 def get_all_trips():
     trips = _get("trips", {"order": "departure.asc"})
-    expanded = []
-    for t in trips:
-        expanded.extend(_expand_trip(t))
-    return expanded
+    # Return one copy per trip with the next upcoming date
+    return [_expand_trip(t)[0] for t in trips]
 
 def get_trip(trip_id):
     res = _get("trips", {"id": f"eq.{trip_id}", "limit": 1})

@@ -16,16 +16,16 @@
 
     <div class="search-form-wrap">
       <div class="row g-3 align-items-end">
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select" onchange="filterTrips()">
+          <select id="f-from" class="form-select">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select" onchange="filterTrips()">
+          <select id="f-to" class="form-select">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
           </select>
@@ -66,7 +66,6 @@ function filterTrips() {
     card.style.display = (matchType && matchFrom && matchTo) ? '' : 'none';
   });
 
-  // hide section headers if all cards in that section are hidden
   ['section-flights','section-ferries'].forEach(id => {
     const sec = document.getElementById(id);
     if (!sec) return;
