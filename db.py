@@ -3,17 +3,8 @@ import hashlib
 import httpx
 from dotenv import load_dotenv
 
-# Only load .env locally (not on Vercel)
 if os.environ.get("VERCEL") is None:
     load_dotenv()
-def update_trip(trip_id, data):
-    _patch("trips", "id", trip_id, data)
-
-def delete_trip(trip_id):
-    _delete("trips", "id", trip_id)
-
-def delete_user(user_id):
-    _delete("users", "id", user_id)
 
 
 def _headers():
@@ -75,6 +66,9 @@ def login_user(email, password):
         return user
     return None
 
+def delete_user(user_id):
+    _delete("users", "id", user_id)
+
 
 # ── Trips ─────────────────────────────────────────────────────────────────────
 def get_all_trips():
@@ -96,6 +90,12 @@ def search_trips(trip_type, origin, dest, date):
         params["departure"] = f"gte.{date}T00:00:00"
     results = _get("trips", params)
     return [t for t in results if t.get("seats", 0) > 0]
+
+def update_trip(trip_id, data):
+    _patch("trips", "id", trip_id, data)
+
+def delete_trip(trip_id):
+    _delete("trips", "id", trip_id)
 
 def decrement_seats(trip_id, qty):
     trip = get_trip(trip_id)

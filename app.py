@@ -4,84 +4,8 @@ from datetime import datetime
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from dotenv import load_dotenv
-
-import os
-import uuid
-from datetime import datetime
-from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from dotenv import load_dotenv
 import db
 
-# Only load .env locally (not in Vercel)
-if os.environ.get("VERCEL") is None:
-    load_dotenv()
-
-app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "transport_booking_key")
-
-# ...existing code for decorators and routes...
-
-# ── Auth guard ────────────────────────────────────────────────────────────────
-def login_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if "user_id" not in session:
-            flash("Please log in to continue.", "warning")
-            return redirect(url_for("login"))
-        return f(*args, **kwargs)
-    return decorated
-
-def admin_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not session.get("is_admin"):
-            flash("Admin access only.", "danger")
-            return redirect(url_for("index"))
-        return f(*args, **kwargs)
-    return decorated
-
-# ...existing code for routes...
-
-# ── Admin Routes ──────────────────────────────────────────────────────────────
-@app.route("/admin/trip/edit/<trip_id>", methods=["GET", "POST"])
-@admin_required
-def admin_edit_trip(trip_id):
-    trip = db.get_trip(trip_id)
-    if not trip:
-        flash("Trip not found.", "danger")
-        return redirect(url_for("admin_dashboard"))
-    if request.method == "POST":
-        # Update fields from form
-        fields = ["from_city", "to_city", "departure", "arrival", "operator", "price", "seats"]
-        data = {f: request.form.get(f, trip.get(f)) for f in fields}
-        try:
-            data["price"] = float(data["price"])
-            data["seats"] = int(data["seats"])
-        except Exception:
-            pass
-        db.update_trip(trip_id, data)
-        flash("Trip updated!", "success")
-        return redirect(url_for("admin_dashboard"))
-    return render_template("edit_trip.html", trip=trip)
-
-@app.route("/admin/trip/delete/<trip_id>", methods=["POST"])
-@admin_required
-def admin_delete_trip(trip_id):
-    db.delete_trip(trip_id)
-    flash("Trip deleted!", "success")
-    return redirect(url_for("admin_dashboard"))
-
-@app.route("/admin/user/delete/<user_id>", methods=["POST"])
-@admin_required
-def admin_delete_user(user_id):
-    db.delete_user(user_id)
-    flash("User deleted!", "success")
-    return redirect(url_for("admin_dashboard"))
-import db
-
-
-# Only load .env locally (not in Vercel)
 if os.environ.get("VERCEL") is None:
     load_dotenv()
 
@@ -286,7 +210,7 @@ def cancel(booking_id):
     return redirect(url_for("my_bookings"))
 
 
-# ── Error Handlers ───────────────────────────────────────────────────────────
+# ── Error Handlers ────────────────────────────────────────────────────────────
 @app.errorhandler(404)
 def not_found(e):
     return render_template("error.html", code=404, msg="Page not found."), 404
@@ -320,12 +244,45 @@ def admin_cancel(booking_id):
         flash(f"Booking #{booking_id} cancelled.", "success")
     return redirect(url_for("admin_dashboard"))
 
+@app.route("/admin/trip/edit/<trip_id>", methods=["GET", "POST"])
+@admin_required
+def admin_edit_trip(trip_id):
+    trip = db.get_trip(trip_id)
+    if not trip:
+        flash("Trip not found.", "danger")
+        return redirect(url_for("admin_dashboard"))
+    if request.method == "POST":
+        fields = ["from_city", "to_city", "departure", "arrival", "operator", "price", "seats"]
+        data = {f: request.form.get(f, trip.get(f)) for f in fields}
+        try:
+            data["price"] = float(data["price"])
+            data["seats"] = int(data["seats"])
+        except Exception:
+            pass
+        db.update_trip(trip_id, data)
+        flash("Trip updated!", "success")
+        return redirect(url_for("admin_dashboard"))
+    return render_template("edit_trip.html", trip=trip)
+
+@app.route("/admin/trip/delete/<trip_id>", methods=["POST"])
+@admin_required
+def admin_delete_trip(trip_id):
+    db.delete_trip(trip_id)
+    flash("Trip deleted!", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/user/delete/<user_id>", methods=["POST"])
+@admin_required
+def admin_delete_user(user_id):
+    db.delete_user(user_id)
+    flash("User deleted!", "success")
+    return redirect(url_for("admin_dashboard"))
 
 
-# Health check route for Vercel debugging
 @app.route("/healthz")
 def healthz():
     return "ok", 200
+
 
 if __name__ == "__main__":
     app.run(debug=True)
