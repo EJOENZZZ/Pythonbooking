@@ -1,3 +1,49 @@
+import os
+import uuid
+from datetime import datetime
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from dotenv import load_dotenv
+
+import os
+import uuid
+from datetime import datetime
+from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, session, flash
+from dotenv import load_dotenv
+import db
+
+# Only load .env locally (not in Vercel)
+if os.environ.get("VERCEL") is None:
+    load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "transport_booking_key")
+
+# ...existing code for decorators and routes...
+
+# ── Auth guard ────────────────────────────────────────────────────────────────
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user_id" not in session:
+            flash("Please log in to continue.", "warning")
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not session.get("is_admin"):
+            flash("Admin access only.", "danger")
+            return redirect(url_for("index"))
+        return f(*args, **kwargs)
+    return decorated
+
+# ...existing code for routes...
+
+# ── Admin Routes ──────────────────────────────────────────────────────────────
 @app.route("/admin/trip/edit/<trip_id>", methods=["GET", "POST"])
 @admin_required
 def admin_edit_trip(trip_id):
@@ -32,12 +78,6 @@ def admin_delete_user(user_id):
     db.delete_user(user_id)
     flash("User deleted!", "success")
     return redirect(url_for("admin_dashboard"))
-import os
-import uuid
-from datetime import datetime
-from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-from dotenv import load_dotenv
 import db
 
 
