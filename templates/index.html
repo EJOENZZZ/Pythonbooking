@@ -59,16 +59,25 @@ function applyFilters() {
   const from = document.getElementById('f-from').value;
   const to   = document.getElementById('f-to').value;
 
+  let flightCount = 0, ferryCount = 0;
+
   document.querySelectorAll('.trip-card').forEach(card => {
     const matchType = !activeType || card.dataset.type === activeType;
-    // never hide cards — always show all trips
-    card.style.display = matchType ? '' : 'none';
+    const matchFrom = !from || card.dataset.from === from;
+    const matchTo   = !to   || card.dataset.to   === to;
+    const show = matchType && matchFrom && matchTo;
+
+    card.style.display = show ? '' : 'none';
+    if (show) {
+      if (card.dataset.type === 'plane') flightCount++;
+      else ferryCount++;
+    }
   });
 
   const sf = document.getElementById('section-flights');
   const sw = document.getElementById('section-ferries');
-  if (sf) sf.style.display = activeType === 'ferry' ? 'none' : '';
-  if (sw) sw.style.display = activeType === 'plane' ? 'none' : '';
+  if (sf) sf.style.display = (activeType === 'ferry' || flightCount === 0) ? 'none' : '';
+  if (sw) sw.style.display = (activeType === 'plane' || ferryCount === 0)  ? 'none' : '';
 
   document.getElementById('trips-section').scrollIntoView({behavior:'smooth'});
 }
