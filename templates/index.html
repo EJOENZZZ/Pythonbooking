@@ -35,7 +35,7 @@
           <input type="number" id="f-pax" class="form-control" value="1" min="1" max="10"/>
         </div>
         <div class="col-md-2">
-          <button onclick="applyFilters(true)" class="btn btn-primary-custom w-100 py-2">
+          <button onclick="applyFilters(); document.getElementById('trips-section').scrollIntoView({behavior:'smooth'})" class="btn btn-primary-custom w-100 py-2">
             <i class="bi bi-search me-1"></i> Search
           </button>
         </div>
@@ -68,9 +68,7 @@ function applyFilters(showDates = false) {
     const show = matchType && matchFrom && matchTo;
 
     card.style.display = show ? '' : 'none';
-
-    // only reveal date pills when Search is clicked
-    card.querySelectorAll('.date-pill').forEach(p => p.style.display = (show && showDates) ? '' : 'none');
+    card.querySelectorAll('.date-pill').forEach(p => p.style.display = show ? '' : 'none');
     const noDateMsg = card.querySelector('.no-date-msg');
     if (noDateMsg) noDateMsg.style.display = 'none';
 
