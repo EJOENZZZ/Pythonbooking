@@ -18,11 +18,15 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">From City</label>
-        <input type="text" class="form-control" name="from_city" placeholder="e.g. Manila" required>
+        <select class="form-select" name="from_city" required>
+          {% for c in cities %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+        </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">To City</label>
-        <input type="text" class="form-control" name="to_city" placeholder="e.g. Cebu" required>
+        <select class="form-select" name="to_city" required>
+          {% for c in cities %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+        </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">Departure</label>

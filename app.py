@@ -6,6 +6,13 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from dotenv import load_dotenv
 import db
 
+CITIES = sorted([
+    "Manila", "Cebu", "Davao", "Iloilo", "Bacolod", "Batangas",
+    "Calapan", "Bohol", "Dumaguete", "Puerto Princesa", "Cagayan de Oro",
+    "Zamboanga", "General Santos", "Tacloban", "Legazpi", "Kalibo",
+    "Roxas", "Cotabato", "Butuan", "Dipolog"
+])
+
 if os.environ.get("VERCEL") is None:
     load_dotenv()
 
@@ -265,11 +272,11 @@ def admin_add_trip():
             data["seats"] = int(data["seats"])
         except Exception:
             flash("Invalid price or seats.", "danger")
-            return render_template("add_trip.html")
+            return render_template("add_trip.html", cities=CITIES)
         db.create_trip(data)
         flash("Trip added!", "success")
         return redirect(url_for("admin_dashboard"))
-    return render_template("add_trip.html")
+    return render_template("add_trip.html", cities=CITIES)
 
 @app.route("/admin/trip/edit/<trip_id>", methods=["GET", "POST"])
 @admin_required
@@ -289,7 +296,7 @@ def admin_edit_trip(trip_id):
         db.update_trip(trip_id, data)
         flash("Trip updated!", "success")
         return redirect(url_for("admin_dashboard"))
-    return render_template("edit_trip.html", trip=trip)
+    return render_template("edit_trip.html", trip=trip, cities=CITIES)
 
 @app.route("/admin/trip/delete/<trip_id>", methods=["POST"])
 @admin_required

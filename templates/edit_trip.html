@@ -1,17 +1,25 @@
 {% extends "base.html" %}
-{% block title %}Edit Flight — Admin{% endblock %}
+{% block title %}Edit Trip — Admin{% endblock %}
 {% block content %}
 <div class="container py-4">
-  <h4 class="fw-bold mb-3"><i class="bi bi-pencil-square me-2" style="color:var(--primary);"></i>Edit Flight</h4>
+  <h4 class="fw-bold mb-3"><i class="bi bi-pencil-square me-2" style="color:var(--primary);"></i>Edit Trip</h4>
   <form method="post">
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label">From City</label>
-        <input type="text" class="form-control" name="from_city" value="{{ trip.from_city }}" required>
+        <select class="form-select" name="from_city" required>
+          {% for c in cities %}
+          <option value="{{ c }}" {% if c == trip.from_city %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">To City</label>
-        <input type="text" class="form-control" name="to_city" value="{{ trip.to_city }}" required>
+        <select class="form-select" name="to_city" required>
+          {% for c in cities %}
+          <option value="{{ c }}" {% if c == trip.to_city %}selected{% endif %}>{{ c }}</option>
+          {% endfor %}
+        </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">Departure</label>
@@ -28,7 +36,7 @@
         </select>
       </div>
       <div class="col-md-3">
-        <label class="form-label">Price</label>
+        <label class="form-label">Price (₱)</label>
         <input type="number" class="form-control" name="price" value="{{ trip.price }}" min="0" step="0.01" required>
       </div>
       <div class="col-md-3">
@@ -50,11 +58,8 @@
   const currentOperator = "{{ trip.operator }}";
   const currentType = "{{ trip.type }}";
   const sel = document.getElementById('operator');
-  operators[currentType].forEach(o => {
-    const opt = document.createElement('option');
-    opt.value = o; opt.text = o;
-    if (o === currentOperator) opt.selected = true;
-    sel.appendChild(opt);
-  });
+  sel.innerHTML = operators[currentType].map(o =>
+    `<option value="${o}"${o === currentOperator ? ' selected' : ''}>${o}</option>`
+  ).join('');
 </script>
 {% endblock %}
