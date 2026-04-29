@@ -22,9 +22,9 @@ app.secret_key = os.environ.get("SECRET_KEY", "transport_booking_key")
 app.config["MAIL_SERVER"]   = "smtp.gmail.com"
 app.config["MAIL_PORT"]     = 587
 app.config["MAIL_USE_TLS"]  = True
-app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME", "")
-app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD", "")
-app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_USERNAME", "")
+app.config["MAIL_USERNAME"] = "ellajoylocahinherra5@gmail.com"
+app.config["MAIL_PASSWORD"] = "uvzbczopvdymfkam"
+app.config["MAIL_DEFAULT_SENDER"] = "ellajoylocahinherra5@gmail.com"
 mail = Mail(app)
 
 
@@ -248,7 +248,7 @@ def forgot_password():
         db.save_reset_code(email, code)
         try:
             msg = Message("TravelBook — Password Reset Code",
-                          sender=os.environ.get("MAIL_USERNAME", ""),
+                          sender="ellajoylocahinherra5@gmail.com",
                           recipients=[email])
             msg.body = f"Your password reset code is: {code}\n\nEnter this code to reset your password."
             mail.send(msg)
