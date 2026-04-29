@@ -75,15 +75,6 @@ function applyFilters() {
   if (sw) sw.style.display = (activeType === 'plane' || sc === 0) ? 'none' : '';
 }
 
-function showDates(btn, tripId) {
-  const card = btn.closest('.trip-card');
-  const dates = card.querySelector('.date-pills');
-  const visible = dates.style.display === 'flex';
-  dates.style.display = visible ? 'none' : 'flex';
-  btn.innerHTML = visible
-    ? 'View Dates <i class="bi bi-calendar3 ms-1"></i>'
-    : 'Hide Dates <i class="bi bi-chevron-up ms-1"></i>';
-}
 </script>
 
 <div id="trips-section">
@@ -115,7 +106,7 @@ function showDates(btn, tripId) {
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
           </div>
-          <div class="date-pills mt-2 flex-wrap gap-1" style="display:none;">
+          <div class="date-pills mt-2 d-flex flex-wrap gap-1">
             {% for d in t.available_dates %}
             <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;">
               <i class="bi bi-calendar3 me-1"></i>{{ d }}
@@ -129,9 +120,6 @@ function showDates(btn, tripId) {
         <div class="col-md-3 text-end">
           <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
           <div class="price-sub mb-2">per passenger</div>
-          <button onclick="showDates(this, '{{ t.id }}')" class="btn btn-ghost btn-sm px-3 mb-2 w-100">
-            View Dates <i class="bi bi-calendar3 ms-1"></i>
-          </button>
           <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4 w-100">
             Book Now <i class="bi bi-arrow-right ms-1"></i>
           </a>
@@ -170,7 +158,7 @@ function showDates(btn, tripId) {
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
           </div>
-          <div class="date-pills mt-2 flex-wrap gap-1" style="display:none;">
+          <div class="date-pills mt-2 d-flex flex-wrap gap-1">
             {% for d in t.available_dates %}
             <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;">
               <i class="bi bi-calendar3 me-1"></i>{{ d }}
@@ -184,9 +172,6 @@ function showDates(btn, tripId) {
         <div class="col-md-3 text-end">
           <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
           <div class="price-sub mb-2">per passenger</div>
-          <button onclick="showDates(this, '{{ t.id }}')" class="btn btn-ghost btn-sm px-3 mb-2 w-100">
-            View Dates <i class="bi bi-calendar3 ms-1"></i>
-          </button>
           <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4 w-100">
             Book Now <i class="bi bi-arrow-right ms-1"></i>
           </a>
