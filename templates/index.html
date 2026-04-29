@@ -106,13 +106,6 @@ function applyFilters() {
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
           </div>
-          <div class="date-pills mt-2 d-flex flex-wrap gap-1">
-            {% for d in t.available_dates %}
-            <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;">
-              <i class="bi bi-calendar3 me-1"></i>{{ d }}
-            </span>
-            {% endfor %}
-          </div>
         </div>
         <div class="col-md-2 text-center">
           <span class="seats-pill"><i class="bi bi-person-check me-1"></i>{{ t.seats }} seats</span>
@@ -157,13 +150,6 @@ function applyFilters() {
               <div class="city-name">{{ t.to_city }}</div>
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
-          </div>
-          <div class="date-pills mt-2 d-flex flex-wrap gap-1">
-            {% for d in t.available_dates %}
-            <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;">
-              <i class="bi bi-calendar3 me-1"></i>{{ d }}
-            </span>
-            {% endfor %}
           </div>
         </div>
         <div class="col-md-2 text-center">
