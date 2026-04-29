@@ -10,7 +10,13 @@ CITIES = sorted([
     "Manila", "Cebu", "Davao", "Iloilo", "Bacolod", "Batangas",
     "Calapan", "Bohol", "Dumaguete", "Puerto Princesa", "Cagayan de Oro",
     "Zamboanga", "General Santos", "Tacloban", "Legazpi", "Kalibo",
-    "Roxas", "Cotabato", "Butuan", "Dipolog"
+    "Roxas", "Cotabato", "Butuan", "Dipolog", "Pagadian", "Ozamiz",
+    "Surigao", "Tandag", "Bislig", "Maasin", "Ormoc", "Catarman",
+    "Catbalogan", "Borongan", "Virac", "Masbate", "Romblon", "Coron",
+    "El Nido", "San Jose", "Busuanga", "Siargao", "Camiguin", "Marawi",
+    "Iligan", "Dapitan", "Ozamiz", "Ipil", "Isabela", "Tuguegarao",
+    "Cauayan", "Baguio", "San Fernando", "Laoag", "Vigan", "Naga",
+    "Malay", "Caticlan", "Tablas", "Mamburao", "Odiongan"
 ])
 
 if os.environ.get("VERCEL") is None:
@@ -124,7 +130,7 @@ def index():
         app.logger.error(f"DB error on index: {e}")
         origins, dests, all_cities, flights, ferries = [], [], [], [], []
         flash(str(e), "danger")
-    return render_template("index.html", origins=all_cities, destinations=all_cities,
+    return render_template("index.html", origins=CITIES, destinations=CITIES,
                            flights=flights, ferries=ferries)
 
 
