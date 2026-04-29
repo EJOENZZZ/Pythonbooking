@@ -45,7 +45,17 @@ create policy "Public can view trips" on trips for select using (true);
 create policy "Public can update trips" on trips for update using (true);
 
 
--- ── 3. BOOKINGS TABLE ─────────────────────────────────────────
+-- ── 3. RESET CODES TABLE ─────────────────────────────────────────
+create table if not exists reset_codes (
+  email      text primary key,
+  code       text not null,
+  created_at timestamp default now()
+);
+alter table reset_codes enable row level security;
+create policy "Public reset_codes" on reset_codes using (true) with check (true);
+
+
+-- ── 4. BOOKINGS TABLE ─────────────────────────────────────────
 create table if not exists bookings (
   id              text primary key,
   trip_id         text not null references trips(id) on delete restrict,

@@ -245,15 +245,13 @@ def forgot_password():
             flash("No account found with that email.", "danger")
             return render_template("forgot_password.html")
         code = str(random.randint(100000, 999999))
-        session["reset_code"]  = code
-        session["reset_email"] = email
+        db.save_reset_code(email, code)
         try:
-            msg = Message("TravelBook — Password Reset Code",
-                          recipients=[email])
-            msg.body = f"Your password reset code is: {code}\n\nThis code expires when you close your browser."
+            msg = Message("TravelBook — Password Reset Code", recipients=[email])
+            msg.body = f"Your password reset code is: {code}\n\nEnter this code to reset your password."
             mail.send(msg)
             flash("A reset code has been sent to your email.", "success")
-            return redirect(url_for("verify_code"))
+            return redirect(url_for("verify_code", email=email))
         except Exception as e:
             flash(f"Failed to send email: {str(e)}", "danger")
     return render_template("forgot_password.html")
@@ -261,15 +259,18 @@ def forgot_password():
 
 @app.route("/verify-code", methods=["GET", "POST"])
 def verify_code():
-    if "reset_email" not in session:
+    email = request.args.get("email") or request.form.get("email", "")
+    if not email:
         return redirect(url_for("forgot_password"))
     if request.method == "POST":
         code = request.form.get("code", "").strip()
-        if code == session.get("reset_code"):
+        record = db.get_reset_code(email)
+        if record and record["code"] == code:
             session["reset_verified"] = True
+            session["reset_email"]    = email
             return redirect(url_for("reset_password"))
         flash("Invalid code. Please try again.", "danger")
-    return render_template("verify_code.html")
+    return render_template("verify_code.html", email=email)
 
 
 @app.route("/reset-password", methods=["GET", "POST"])
@@ -285,11 +286,10 @@ def reset_password():
         if password != confirm:
             flash("Passwords do not match.", "danger")
             return render_template("reset_password.html")
-        email = session.get("reset_email")
-        db.update_password(email, password)
-        session.pop("reset_code", None)
-        session.pop("reset_email", None)
+        email = session.pop("reset_email", None)
         session.pop("reset_verified", None)
+        db.update_password(email, password)
+        db.delete_reset_code(email)
         flash("Password updated! Please log in.", "success")
         return redirect(url_for("login"))
     return render_template("reset_password.html")

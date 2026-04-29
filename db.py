@@ -73,6 +73,18 @@ def delete_user(user_id):
 def update_password(email, new_password):
     _patch("users", "email", email, {"password": hash_password(new_password)})
 
+def save_reset_code(email, code):
+    # upsert: delete old then insert new
+    _delete("reset_codes", "email", email)
+    _post("reset_codes", {"email": email, "code": code})
+
+def get_reset_code(email):
+    res = _get("reset_codes", {"email": f"eq.{email}", "limit": 1})
+    return res[0] if res else None
+
+def delete_reset_code(email):
+    _delete("reset_codes", "email", email)
+
 
 # ── Trips ─────────────────────────────────────────────────────────────────────
 def _expand_trip(trip, days=14):
