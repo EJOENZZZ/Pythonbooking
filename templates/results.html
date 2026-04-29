@@ -6,7 +6,8 @@
   <div>
     <div class="d-flex align-items-center gap-2 mb-1">
       {% if trip_type == "plane" %}<span class="badge-plane">✈️ Flights</span>
-      {% else %}<span class="badge-ferry">⛴️ Ferries</span>{% endif %}
+      {% elif trip_type == "ferry" %}<span class="badge-ferry">⛴️ Ferries</span>
+      {% else %}<span class="badge-plane">✈️</span><span class="badge-ferry ms-1">⛴️ All Trips</span>{% endif %}
       <span class="fw-bold fs-5">{{ origin }} → {{ dest }}</span>
     </div>
     <small class="text-muted">

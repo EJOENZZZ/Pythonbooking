@@ -34,11 +34,13 @@
           </a>
         </li>
         {% if session.user_id %}
+        {% if not session.is_admin %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('my_bookings') }}">
             <i class="bi bi-ticket-perforated me-1"></i>My Bookings
           </a>
         </li>
+        {% endif %}
         {% if session.is_admin %}
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('admin_dashboard') }}">

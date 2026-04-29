@@ -60,7 +60,7 @@
 
 <!-- Available Flights -->
 {% if flights %}
-<div class="mb-5">
+<div class="mb-5" id="section-flights">
   <div class="section-title"><i class="bi bi-airplane-fill text-primary"></i> Available Flights</div>
   {% for t in flights %}
   <div class="result-card">
@@ -107,7 +107,7 @@
 
 <!-- Available Ferries -->
 {% if ferries %}
-<div class="mb-5">
+<div class="mb-5" id="section-ferries">
   <div class="section-title"><i class="bi bi-water text-success"></i> Available Ferries</div>
   {% for t in ferries %}
   <div class="result-card">
@@ -184,6 +184,10 @@
     document.getElementById('all-tab').classList.toggle('active', type === '');
     document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
     document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
+    var flights = document.getElementById('section-flights');
+    var ferries = document.getElementById('section-ferries');
+    if (flights) flights.style.display = (type === 'ferry') ? 'none' : '';
+    if (ferries) ferries.style.display = (type === 'plane') ? 'none' : '';
   }
 </script>
 {% endblock %}
