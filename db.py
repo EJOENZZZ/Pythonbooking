@@ -108,14 +108,11 @@ def search_trips(trip_type, origin, dest, date):
     if trip_type:
         params["type"] = f"eq.{trip_type}"
     if origin:
-        params["from_city"] = f"ilike.{origin}"
+        params["from_city"] = f"eq.{origin}"
     if dest:
-        params["to_city"] = f"ilike.{dest}"
+        params["to_city"] = f"eq.{dest}"
     results = _get("trips", params)
-    trips = [_advance_trip(t) for t in results if t.get("seats", 0) > 0]
-    if date:
-        trips = [t for t in trips if t["departure"][:10] >= date]
-    return trips
+    return [_advance_trip(t) for t in results if t.get("seats", 0) > 0]
 
 def create_trip(data):
     return _post("trips", data)
