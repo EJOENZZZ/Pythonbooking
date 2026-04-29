@@ -122,6 +122,13 @@ def search_trips(trip_type, origin, dest, date):
             expanded.extend(_expand_trip(t))
     return expanded
 
+def get_trip_dates(trip_id):
+    res = _get("trips", {"id": f"eq.{trip_id}", "limit": 1})
+    if not res:
+        return []
+    copies = _expand_trip(res[0])
+    return [t["departure"][:10] for t in copies]
+
 def create_trip(data):
     return _post("trips", data)
 

@@ -18,22 +18,16 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-3">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select" onchange="updateDates()">
+          <select id="f-from" class="form-select">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
         <div class="col-md-3">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select" onchange="updateDates()">
+          <select id="f-to" class="form-select">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
-          </select>
-        </div>
-        <div class="col-md-2">
-          <label class="form-label">Available Dates</label>
-          <select id="f-date" class="form-select">
-            <option value="">Select route first</option>
           </select>
         </div>
         <div class="col-md-2">
@@ -69,30 +63,6 @@ function setType(type) {
   var sw = document.getElementById('section-ferries');
   if (fw) fw.style.display = (type === 'ferry') ? 'none' : '';
   if (sw) sw.style.display = (type === 'plane') ? 'none' : '';
-  updateDates();
-}
-
-function updateDates() {
-  const from = document.getElementById('f-from').value;
-  const to   = document.getElementById('f-to').value;
-  const sel  = document.getElementById('f-date');
-
-  if (!from && !to) {
-    sel.innerHTML = '<option value="">Select route first</option>';
-    return;
-  }
-
-  const dates = [...new Set(
-    TRIPS.filter(t =>
-      (!activeType || t.type === activeType) &&
-      (!from || t.from_city === from) &&
-      (!to   || t.to_city   === to)
-    ).map(t => t.date).sort()
-  )];
-
-  sel.innerHTML = dates.length
-    ? dates.map(d => `<option value="${d}">${d}</option>`).join('')
-    : '<option value="">No dates available</option>';
 }
 
 function scrollToTrips() {

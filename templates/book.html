@@ -35,6 +35,17 @@
       <div class="section-title"><i class="bi bi-person-lines-fill text-danger"></i> Passenger Details</div>
       <form method="post">
         <div class="mb-3">
+          <label class="form-label">Travel Date</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+            <select name="travel_date" class="form-select" required>
+              {% for d in available_dates %}
+              <option value="{{ d }}">{{ d }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
           <label class="form-label">Full Name</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-person"></i></span>

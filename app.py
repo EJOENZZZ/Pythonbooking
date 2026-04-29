@@ -141,20 +141,25 @@ def book(trip_id):
         return redirect(url_for("index"))
 
     passengers = int(request.args.get("passengers", 1))
+    available_dates = db.get_trip_dates(trip_id)
 
     if request.method == "POST":
-        name       = request.form.get("name", "").strip()
-        email      = request.form.get("email", "").strip()
-        phone      = request.form.get("phone", "").strip()
-        passengers = int(request.form.get("passengers", 1))
+        name         = request.form.get("name", "").strip()
+        email        = request.form.get("email", "").strip()
+        phone        = request.form.get("phone", "").strip()
+        passengers   = int(request.form.get("passengers", 1))
+        travel_date  = request.form.get("travel_date", trip["departure"][:10])
 
         if not name or not email or not phone:
             flash("Please fill in all required fields.", "danger")
-            return render_template("book.html", trip=trip, passengers=passengers)
+            return render_template("book.html", trip=trip, passengers=passengers, available_dates=available_dates)
 
         if passengers > trip["seats"]:
             flash(f"Only {trip['seats']} seats available.", "warning")
-            return render_template("book.html", trip=trip, passengers=passengers)
+            return render_template("book.html", trip=trip, passengers=passengers, available_dates=available_dates)
+
+        dep_time = trip["departure"][11:] if len(trip["departure"]) > 10 else "00:00:00"
+        arr_time = trip["arrival"][11:]   if len(trip["arrival"]) > 10   else "00:00:00"
 
         booking_data = {
             "id":             str(uuid.uuid4())[:8].upper(),
@@ -163,8 +168,8 @@ def book(trip_id):
             "type":           trip["type"],
             "from_city":      trip["from_city"],
             "to_city":        trip["to_city"],
-            "departure":      trip["departure"],
-            "arrival":        trip["arrival"],
+            "departure":      f"{travel_date}T{dep_time}",
+            "arrival":        f"{travel_date}T{arr_time}",
             "operator":       trip["operator"],
             "passenger_name": name,
             "email":          email,
@@ -179,7 +184,7 @@ def book(trip_id):
         session["last_booking_id"] = booking["id"]
         return redirect(url_for("confirm"))
 
-    return render_template("book.html", trip=trip, passengers=passengers)
+    return render_template("book.html", trip=trip, passengers=passengers, available_dates=available_dates)
 
 
 @app.route("/confirm")
