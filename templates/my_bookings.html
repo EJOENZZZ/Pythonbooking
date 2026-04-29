@@ -59,11 +59,6 @@
           <div class="fw-bold" style="color:var(--primary);">₱{{ "%.2f"|format(b.total) }}</div>
         </div>
         <div class="col-md-1 text-end">
-          {% if b.status == "Confirmed" %}
-          <form method="post" action="{{ url_for('cancel', booking_id=b.id) }}" onsubmit="return confirm('Cancel booking {{ b.id }}?')">
-            <button class="btn btn-ghost btn-sm px-3"><i class="bi bi-x-lg"></i></button>
-          </form>
-          {% endif %}
         </div>
       </div>
     </div>
