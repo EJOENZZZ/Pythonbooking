@@ -35,7 +35,7 @@
       <div class="mb-4">
         <div class="d-flex justify-content-between align-items-center">
           <label class="form-label">Password</label>
-          <a href="{{ url_for('forgot_password') }}" style="font-size:.82rem;color:var(--primary);">Forgot password?</a>
+          <a href="{{ url_for('forgot_password') }}" id="forgot-link" style="font-size:.82rem;color:var(--primary);">Forgot password?</a>
         </div>
         <div class="input-group">
           <span class="input-group-text"><i class="bi bi-lock"></i></span>
@@ -56,18 +56,21 @@
 <script>
 function setRole(role) {
   document.getElementById('role-input').value = role;
-  const userTab  = document.getElementById('tab-user');
-  const adminTab = document.getElementById('tab-admin');
+  const userTab    = document.getElementById('tab-user');
+  const adminTab   = document.getElementById('tab-admin');
+  const forgotLink = document.getElementById('forgot-link');
   if (role === 'user') {
     userTab.style.background  = 'var(--primary)';
     userTab.style.color       = '#fff';
     adminTab.style.background = '#f1f5f9';
     adminTab.style.color      = '#64748b';
+    forgotLink.style.display  = '';
   } else {
     adminTab.style.background = 'var(--navy)';
     adminTab.style.color      = '#fff';
     userTab.style.background  = '#f1f5f9';
     userTab.style.color       = '#64748b';
+    forgotLink.style.display  = 'none';
   }
 }
 </script>
