@@ -91,6 +91,9 @@ def search_trips(trip_type, origin, dest, date):
     results = _get("trips", params)
     return [t for t in results if t.get("seats", 0) > 0]
 
+def create_trip(data):
+    return _post("trips", data)
+
 def update_trip(trip_id, data):
     _patch("trips", "id", trip_id, data)
 

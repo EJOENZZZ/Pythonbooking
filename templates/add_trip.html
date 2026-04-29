@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Add Trip — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h4 class="fw-bold mb-3"><i class="bi bi-plus-circle me-2" style="color:var(--primary);"></i>Add New Trip</h4>
+  <form method="post">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Type</label>
+        <select class="form-select" name="type" required>
+          <option value="plane">✈️ Plane</option>
+          <option value="ferry">⛴️ Ferry</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Operator</label>
+        <input type="text" class="form-control" name="operator" placeholder="e.g. Cebu Pacific" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">From City</label>
+        <input type="text" class="form-control" name="from_city" placeholder="e.g. Manila" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">To City</label>
+        <input type="text" class="form-control" name="to_city" placeholder="e.g. Cebu" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Departure</label>
+        <input type="datetime-local" class="form-control" name="departure" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Arrival</label>
+        <input type="datetime-local" class="form-control" name="arrival" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Price (₱)</label>
+        <input type="number" class="form-control" name="price" min="0" step="0.01" placeholder="0.00" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Seats</label>
+        <input type="number" class="form-control" name="seats" min="1" placeholder="100" required>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add Trip</button>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

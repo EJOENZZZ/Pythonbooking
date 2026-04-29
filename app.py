@@ -244,6 +244,23 @@ def admin_cancel(booking_id):
         flash(f"Booking #{booking_id} cancelled.", "success")
     return redirect(url_for("admin_dashboard"))
 
+@app.route("/admin/trip/add", methods=["GET", "POST"])
+@admin_required
+def admin_add_trip():
+    if request.method == "POST":
+        fields = ["type", "from_city", "to_city", "departure", "arrival", "operator", "price", "seats"]
+        data = {f: request.form.get(f, "").strip() for f in fields}
+        try:
+            data["price"] = float(data["price"])
+            data["seats"] = int(data["seats"])
+        except Exception:
+            flash("Invalid price or seats.", "danger")
+            return render_template("add_trip.html")
+        db.create_trip(data)
+        flash("Trip added!", "success")
+        return redirect(url_for("admin_dashboard"))
+    return render_template("add_trip.html")
+
 @app.route("/admin/trip/edit/<trip_id>", methods=["GET", "POST"])
 @admin_required
 def admin_edit_trip(trip_id):
