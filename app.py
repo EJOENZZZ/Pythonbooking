@@ -1,3 +1,37 @@
+@app.route("/admin/trip/edit/<trip_id>", methods=["GET", "POST"])
+@admin_required
+def admin_edit_trip(trip_id):
+    trip = db.get_trip(trip_id)
+    if not trip:
+        flash("Trip not found.", "danger")
+        return redirect(url_for("admin_dashboard"))
+    if request.method == "POST":
+        # Update fields from form
+        fields = ["from_city", "to_city", "departure", "arrival", "operator", "price", "seats"]
+        data = {f: request.form.get(f, trip.get(f)) for f in fields}
+        try:
+            data["price"] = float(data["price"])
+            data["seats"] = int(data["seats"])
+        except Exception:
+            pass
+        db.update_trip(trip_id, data)
+        flash("Trip updated!", "success")
+        return redirect(url_for("admin_dashboard"))
+    return render_template("edit_trip.html", trip=trip)
+
+@app.route("/admin/trip/delete/<trip_id>", methods=["POST"])
+@admin_required
+def admin_delete_trip(trip_id):
+    db.delete_trip(trip_id)
+    flash("Trip deleted!", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/user/delete/<user_id>", methods=["POST"])
+@admin_required
+def admin_delete_user(user_id):
+    db.delete_user(user_id)
+    flash("User deleted!", "success")
+    return redirect(url_for("admin_dashboard"))
 import os
 import uuid
 from datetime import datetime
@@ -117,7 +151,7 @@ def index():
 
 @app.route("/search")
 def search():
-    trip_type  = request.args.get("type", "plane")
+    trip_type  = request.args.get("type", "").strip()
     origin     = request.args.get("from", "").strip()
     dest       = request.args.get("to",   "").strip()
     date       = request.args.get("date", "").strip()

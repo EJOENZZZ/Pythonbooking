@@ -1,3 +1,11 @@
+def update_trip(trip_id, data):
+    _patch("trips", "id", trip_id, data)
+
+def delete_trip(trip_id):
+    _delete("trips", "id", trip_id)
+
+def delete_user(user_id):
+    _delete("users", "id", user_id)
 import os
 import hashlib
 import httpx

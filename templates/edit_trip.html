@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Edit Flight — Admin{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <h4 class="fw-bold mb-3"><i class="bi bi-pencil-square me-2" style="color:var(--primary);"></i>Edit Flight</h4>
+  <form method="post">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">From City</label>
+        <input type="text" class="form-control" name="from_city" value="{{ trip.from_city }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">To City</label>
+        <input type="text" class="form-control" name="to_city" value="{{ trip.to_city }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Departure</label>
+        <input type="datetime-local" class="form-control" name="departure" value="{{ trip.departure[:16] }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Arrival</label>
+        <input type="datetime-local" class="form-control" name="arrival" value="{{ trip.arrival[:16] }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Operator</label>
+        <input type="text" class="form-control" name="operator" value="{{ trip.operator }}" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Price</label>
+        <input type="number" class="form-control" name="price" value="{{ trip.price }}" min="0" step="0.01" required>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Seats</label>
+        <input type="number" class="form-control" name="seats" value="{{ trip.seats }}" min="0" required>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Save Changes</button>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
