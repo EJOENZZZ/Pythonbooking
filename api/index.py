@@ -1,15 +1,6 @@
 import sys
-import traceback
-sys.path.append("..")  # Ensure parent dir is in path for imports
+import os
 
-try:
-    from app import app
-except Exception as e:
-    print("Vercel import error:", e, file=sys.stderr)
-    traceback.print_exc()
-    # Fallback minimal app for error reporting
-    from flask import Flask
-    app = Flask(__name__)
-    @app.route("/")
-    def error():
-        return f"Vercel import error: {e}", 500
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from app import app
