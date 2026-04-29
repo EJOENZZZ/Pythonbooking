@@ -18,14 +18,14 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-4">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select">
+          <select id="f-from" class="form-select" onchange="applyFilters()">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
         <div class="col-md-4">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select">
+          <select id="f-to" class="form-select" onchange="applyFilters()">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
           </select>
@@ -35,7 +35,7 @@
           <input type="number" id="f-pax" class="form-control" value="1" min="1" max="10"/>
         </div>
         <div class="col-md-2">
-          <button onclick="doSearch()" class="btn btn-primary-custom w-100 py-2">
+          <button onclick="applyFilters(); document.getElementById('trips-section').scrollIntoView({behavior:'smooth'})" class="btn btn-primary-custom w-100 py-2">
             <i class="bi bi-search me-1"></i> Search
           </button>
         </div>
@@ -52,20 +52,39 @@ function setType(type) {
   document.getElementById('all-tab').classList.toggle('active', type === '');
   document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
   document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
+  applyFilters();
+}
+
+function applyFilters() {
+  const from = document.getElementById('f-from').value;
+  const to   = document.getElementById('f-to').value;
+  let fc = 0, sc = 0;
 
   document.querySelectorAll('.trip-card').forEach(card => {
-    card.style.display = (!type || card.dataset.type === type) ? '' : 'none';
+    const matchType = !activeType || card.dataset.type === activeType;
+    const matchFrom = !from || card.dataset.from === from;
+    const matchTo   = !to   || card.dataset.to   === to;
+    const show = matchType && matchFrom && matchTo;
+    card.style.display = show ? '' : 'none';
+    if (show) card.dataset.type === 'plane' ? fc++ : sc++;
   });
 
   const sf = document.getElementById('section-flights');
   const sw = document.getElementById('section-ferries');
-  if (sf) sf.style.display = type === 'ferry' ? 'none' : '';
-  if (sw) sw.style.display = type === 'plane' ? 'none' : '';
+  if (sf) sf.style.display = (activeType === 'ferry' || fc === 0) ? 'none' : '';
+  if (sw) sw.style.display = (activeType === 'plane' || sc === 0) ? 'none' : '';
 }
 
-function doSearch() {
-  // all trips always visible — just scroll down
-  document.getElementById('trips-section').scrollIntoView({behavior:'smooth'});
+function showDates(btn, tripId) {
+  const card = btn.closest('.trip-card');
+  const dates = card.querySelector('.date-pills');
+  if (dates.style.display === 'none' || dates.style.display === '') {
+    dates.style.display = 'flex';
+    btn.innerHTML = 'Hide Dates <i class="bi bi-chevron-up ms-1"></i>';
+  } else {
+    dates.style.display = 'none';
+    btn.innerHTML = 'View Dates <i class="bi bi-calendar3 ms-1"></i>';
+  }
 }
 </script>
 
@@ -98,7 +117,7 @@ function doSearch() {
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
           </div>
-          <div class="mt-2 d-flex flex-wrap gap-1">
+          <div class="date-pills mt-2 flex-wrap gap-1" style="display:none;">
             {% for d in t.available_dates %}
             <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;">
               <i class="bi bi-calendar3 me-1"></i>{{ d }}
@@ -112,7 +131,10 @@ function doSearch() {
         <div class="col-md-3 text-end">
           <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
           <div class="price-sub mb-2">per passenger</div>
-          <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4">
+          <button onclick="showDates(this, '{{ t.id }}')" class="btn btn-ghost btn-sm px-3 mb-2 w-100">
+            View Dates <i class="bi bi-calendar3 ms-1"></i>
+          </button>
+          <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4 w-100">
             Book Now <i class="bi bi-arrow-right ms-1"></i>
           </a>
         </div>
@@ -150,7 +172,7 @@ function doSearch() {
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
           </div>
-          <div class="mt-2 d-flex flex-wrap gap-1">
+          <div class="date-pills mt-2 flex-wrap gap-1" style="display:none;">
             {% for d in t.available_dates %}
             <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;">
               <i class="bi bi-calendar3 me-1"></i>{{ d }}
@@ -164,7 +186,10 @@ function doSearch() {
         <div class="col-md-3 text-end">
           <div class="price-big">₱{{ "%.2f"|format(t.price) }}</div>
           <div class="price-sub mb-2">per passenger</div>
-          <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4">
+          <button onclick="showDates(this, '{{ t.id }}')" class="btn btn-ghost btn-sm px-3 mb-2 w-100">
+            View Dates <i class="bi bi-calendar3 ms-1"></i>
+          </button>
+          <a href="{{ url_for('book', trip_id=t.id) }}" class="btn btn-primary-custom btn-sm px-4 w-100">
             Book Now <i class="bi bi-arrow-right ms-1"></i>
           </a>
         </div>
