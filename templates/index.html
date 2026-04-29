@@ -18,14 +18,14 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-4">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select" onchange="updateDatePills()">
+          <select id="f-from" class="form-select" onchange="applyFilters()">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
         <div class="col-md-4">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select" onchange="updateDatePills()">
+          <select id="f-to" class="form-select" onchange="applyFilters()">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
           </select>
@@ -35,7 +35,7 @@
           <input type="number" id="f-pax" class="form-control" value="1" min="1" max="10"/>
         </div>
         <div class="col-md-2">
-          <button onclick="document.getElementById('trips-section').scrollIntoView({behavior:'smooth'})" class="btn btn-primary-custom w-100 py-2">
+          <button onclick="applyFilters(); document.getElementById('trips-section').scrollIntoView({behavior:'smooth'})" class="btn btn-primary-custom w-100 py-2">
             <i class="bi bi-search me-1"></i> Search
           </button>
         </div>
@@ -52,28 +52,39 @@ function setType(type) {
   document.getElementById('all-tab').classList.toggle('active', type === '');
   document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
   document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
-  updateDatePills();
-  const sf = document.getElementById('section-flights');
-  const sw = document.getElementById('section-ferries');
-  if (sf) sf.style.display = (type === 'ferry') ? 'none' : '';
-  if (sw) sw.style.display = (type === 'plane') ? 'none' : '';
+  applyFilters();
 }
 
-function updateDatePills() {
+function applyFilters() {
   const from = document.getElementById('f-from').value;
   const to   = document.getElementById('f-to').value;
 
+  let flightCount = 0, ferryCount = 0;
+
   document.querySelectorAll('.trip-card').forEach(card => {
+    const matchType = !activeType || card.dataset.type === activeType;
     const matchFrom = !from || card.dataset.from === from;
     const matchTo   = !to   || card.dataset.to   === to;
-    const matched   = matchFrom && matchTo;
+    const show = matchType && matchFrom && matchTo;
 
-    // show/hide date pills based on route match
-    card.querySelectorAll('.date-pill').forEach(p => {
-      p.style.display = matched ? '' : 'none';
-    });
-    card.querySelector('.no-date-msg').style.display = matched ? 'none' : '';
+    card.style.display = show ? '' : 'none';
+
+    // show date pills only when this card matches the selected route
+    const routeSelected = from || to;
+    card.querySelectorAll('.date-pill').forEach(p => p.style.display = show ? '' : 'none');
+    const noDateMsg = card.querySelector('.no-date-msg');
+    if (noDateMsg) noDateMsg.style.display = (!show && routeSelected) ? '' : 'none';
+
+    if (show) {
+      if (card.dataset.type === 'plane') flightCount++;
+      else ferryCount++;
+    }
   });
+
+  const sf = document.getElementById('section-flights');
+  const sw = document.getElementById('section-ferries');
+  if (sf) sf.style.display = (activeType === 'ferry' || flightCount === 0) ? 'none' : '';
+  if (sw) sw.style.display = (activeType === 'plane' || ferryCount === 0)  ? 'none' : '';
 }
 </script>
 
