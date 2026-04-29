@@ -46,11 +46,13 @@
         <i class="bi bi-box-arrow-in-right me-2"></i>Log In
       </button>
     </form>
+    <div id="signup-section">
     <div class="divider">or</div>
     <p class="text-center mb-0" style="font-size:.9rem;color:var(--muted);">
       Don't have an account?
       <a href="{{ url_for('signup') }}" style="color:var(--primary);font-weight:700;">Create one free →</a>
     </p>
+    </div>
   </div>
 </div>
 <script>
@@ -65,12 +67,14 @@ function setRole(role) {
     adminTab.style.background = '#f1f5f9';
     adminTab.style.color      = '#64748b';
     forgotLink.style.display  = '';
+    document.getElementById('signup-section').style.display = '';
   } else {
     adminTab.style.background = 'var(--navy)';
     adminTab.style.color      = '#fff';
     userTab.style.background  = '#f1f5f9';
     userTab.style.color       = '#64748b';
     forgotLink.style.display  = 'none';
+    document.getElementById('signup-section').style.display = 'none';
   }
 }
 </script>
