@@ -139,7 +139,8 @@ body {
 
 /* Hero */
 .hero-section {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 50%, var(--navy-3) 100%);
+  background: linear-gradient(135deg, rgba(10,22,40,.92) 0%, rgba(17,34,64,.88) 50%, rgba(29,52,97,.85) 100%),
+              url('https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1400&q=80') center/cover no-repeat;
   border-radius: var(--radius-lg);
   padding: 3.5rem 3rem 3rem;
   position: relative;
@@ -343,7 +344,14 @@ body {
 .badge-status-cancelled { background: #f1f5f9; color: #64748b; border-radius: 20px; padding: 3px 12px; font-size: .78rem; font-weight: 700; display: inline-block; }
 
 /* Footer */
-.site-footer { background: var(--navy); color: #475569; padding: 2rem 0; margin-top: 5rem; font-size: .85rem; }
+.site-footer {
+  background: linear-gradient(rgba(10,22,40,.96), rgba(10,22,40,.96)),
+              url('https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=1400&q=80') center/cover no-repeat;
+  color: #475569;
+  padding: 2rem 0;
+  margin-top: 5rem;
+  font-size: .85rem;
+}
 .site-footer a { color: #64748b; text-decoration: none; transition: color .2s; }
 .site-footer a:hover { color: #fff; }
 .footer-brand { color: #fff; font-weight: 800; font-size: 1.1rem; }
