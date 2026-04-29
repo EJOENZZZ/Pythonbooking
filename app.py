@@ -7,16 +7,8 @@ from dotenv import load_dotenv
 import db
 
 CITIES = sorted([
-    "Manila", "Cebu", "Davao", "Iloilo", "Bacolod", "Batangas",
-    "Calapan", "Bohol", "Dumaguete", "Puerto Princesa", "Cagayan de Oro",
-    "Zamboanga", "General Santos", "Tacloban", "Legazpi", "Kalibo",
-    "Roxas", "Cotabato", "Butuan", "Dipolog", "Pagadian", "Ozamiz",
-    "Surigao", "Tandag", "Bislig", "Maasin", "Ormoc", "Catarman",
-    "Catbalogan", "Borongan", "Virac", "Masbate", "Romblon", "Coron",
-    "El Nido", "San Jose", "Busuanga", "Siargao", "Camiguin", "Marawi",
-    "Iligan", "Dapitan", "Ozamiz", "Ipil", "Isabela", "Tuguegarao",
-    "Cauayan", "Baguio", "San Fernando", "Laoag", "Vigan", "Naga",
-    "Malay", "Caticlan", "Tablas", "Mamburao", "Odiongan"
+    "Manila", "Cebu", "Davao", "Iloilo", "Bacolod",
+    "Batangas", "Calapan", "Dumaguete", "Cagayan de Oro", "Zamboanga"
 ])
 
 if os.environ.get("VERCEL") is None:
