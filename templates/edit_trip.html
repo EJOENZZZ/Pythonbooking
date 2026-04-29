@@ -23,7 +23,9 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Operator</label>
-        <input type="text" class="form-control" name="operator" value="{{ trip.operator }}" required>
+        <select class="form-select" name="operator" id="operator" required>
+          <option value="{{ trip.operator }}" selected>{{ trip.operator }}</option>
+        </select>
       </div>
       <div class="col-md-3">
         <label class="form-label">Price</label>
@@ -40,4 +42,19 @@
     </div>
   </form>
 </div>
+<script>
+  const operators = {
+    plane: ["Cebu Pacific", "Philippine Airlines", "AirAsia Philippines", "Philippines AirAsia", "SkyJet Airlines"],
+    ferry: ["2GO Travel", "Oceanjet", "SuperCat", "Lite Ferries", "Starlite Ferries", "Montenegro Lines"]
+  };
+  const currentOperator = "{{ trip.operator }}";
+  const currentType = "{{ trip.type }}";
+  const sel = document.getElementById('operator');
+  operators[currentType].forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o; opt.text = o;
+    if (o === currentOperator) opt.selected = true;
+    sel.appendChild(opt);
+  });
+</script>
 {% endblock %}

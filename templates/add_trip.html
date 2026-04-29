@@ -7,14 +7,14 @@
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label">Type</label>
-        <select class="form-select" name="type" required>
+        <select class="form-select" name="type" id="trip_type" onchange="updateOperators()" required>
           <option value="plane">✈️ Plane</option>
           <option value="ferry">⛴️ Ferry</option>
         </select>
       </div>
       <div class="col-md-6">
         <label class="form-label">Operator</label>
-        <input type="text" class="form-control" name="operator" placeholder="e.g. Cebu Pacific" required>
+        <select class="form-select" name="operator" id="operator" required></select>
       </div>
       <div class="col-md-6">
         <label class="form-label">From City</label>
@@ -47,4 +47,16 @@
     </div>
   </form>
 </div>
+<script>
+  const operators = {
+    plane: ["Cebu Pacific", "Philippine Airlines", "AirAsia Philippines", "Philippines AirAsia", "SkyJet Airlines"],
+    ferry: ["2GO Travel", "Oceanjet", "SuperCat", "Lite Ferries", "Starlite Ferries", "Montenegro Lines"]
+  };
+  function updateOperators() {
+    const type = document.getElementById('trip_type').value;
+    const sel = document.getElementById('operator');
+    sel.innerHTML = operators[type].map(o => `<option value="${o}">${o}</option>`).join('');
+  }
+  updateOperators();
+</script>
 {% endblock %}
