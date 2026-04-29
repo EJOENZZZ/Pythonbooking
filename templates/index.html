@@ -18,14 +18,14 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-3">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select">
+          <select id="f-from" class="form-select" onchange="filterTrips()">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
         <div class="col-md-3">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select">
+          <select id="f-to" class="form-select" onchange="filterTrips()">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
           </select>
@@ -35,7 +35,7 @@
           <input type="number" id="f-pax" class="form-control" value="1" min="1" max="10"/>
         </div>
         <div class="col-md-2">
-          <button onclick="scrollToTrips()" class="btn btn-primary-custom w-100 py-2">
+          <button onclick="filterTrips()" class="btn btn-primary-custom w-100 py-2">
             <i class="bi bi-search me-1"></i> Search
           </button>
         </div>
@@ -45,13 +45,6 @@
 </div>
 
 <script>
-const TRIPS = [
-  {% for t in flights + ferries %}{
-    type:"{{ t.type }}", from_city:"{{ t.from_city }}", to_city:"{{ t.to_city }}",
-    date:"{{ t.departure[:10] }}"
-  },{% endfor %}
-];
-
 let activeType = '';
 
 function setType(type) {
@@ -59,13 +52,28 @@ function setType(type) {
   document.getElementById('all-tab').classList.toggle('active', type === '');
   document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
   document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
-  var fw = document.getElementById('section-flights');
-  var sw = document.getElementById('section-ferries');
-  if (fw) fw.style.display = (type === 'ferry') ? 'none' : '';
-  if (sw) sw.style.display = (type === 'plane') ? 'none' : '';
+  filterTrips();
 }
 
-function scrollToTrips() {
+function filterTrips() {
+  const from = document.getElementById('f-from').value;
+  const to   = document.getElementById('f-to').value;
+
+  document.querySelectorAll('.trip-card').forEach(card => {
+    const matchType = !activeType || card.dataset.type === activeType;
+    const matchFrom = !from || card.dataset.from === from;
+    const matchTo   = !to   || card.dataset.to   === to;
+    card.style.display = (matchType && matchFrom && matchTo) ? '' : 'none';
+  });
+
+  // hide section headers if all cards in that section are hidden
+  ['section-flights','section-ferries'].forEach(id => {
+    const sec = document.getElementById(id);
+    if (!sec) return;
+    const visible = sec.querySelectorAll('.trip-card:not([style*="none"])');
+    sec.style.display = visible.length ? '' : 'none';
+  });
+
   document.getElementById('trips-section').scrollIntoView({behavior:'smooth'});
 }
 </script>
@@ -75,7 +83,7 @@ function scrollToTrips() {
   <div class="mb-5" id="section-flights">
     <div class="section-title"><i class="bi bi-airplane-fill text-primary"></i> Available Flights</div>
     {% for t in flights %}
-    <div class="result-card">
+    <div class="result-card trip-card" data-type="plane" data-from="{{ t.from_city }}" data-to="{{ t.to_city }}">
       <div class="row align-items-center g-3">
         <div class="col-md-2 d-flex align-items-center gap-2">
           <div class="airline-logo">✈️</div>
@@ -121,7 +129,7 @@ function scrollToTrips() {
   <div class="mb-5" id="section-ferries">
     <div class="section-title"><i class="bi bi-water text-success"></i> Available Ferries</div>
     {% for t in ferries %}
-    <div class="result-card">
+    <div class="result-card trip-card" data-type="ferry" data-from="{{ t.from_city }}" data-to="{{ t.to_city }}">
       <div class="row align-items-center g-3">
         <div class="col-md-2 d-flex align-items-center gap-2">
           <div class="airline-logo">⛴️</div>
