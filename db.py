@@ -178,3 +178,12 @@ def create_booking(data):
 
 def cancel_booking(booking_id):
     _delete("bookings", "id", booking_id)
+
+def request_cancellation(booking_id, reason):
+    _patch("bookings", "id", booking_id, {"status": "Pending Cancellation", "cancel_reason": reason})
+
+def confirm_cancellation(booking_id):
+    _patch("bookings", "id", booking_id, {"status": "Cancelled"})
+
+def reject_cancellation(booking_id):
+    _patch("bookings", "id", booking_id, {"status": "Confirmed", "cancel_reason": None})

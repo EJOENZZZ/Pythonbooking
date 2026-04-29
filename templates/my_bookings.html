@@ -23,6 +23,8 @@
       </div>
       {% if b.status == "Confirmed" %}
         <span class="badge-status-confirmed">{{ b.status }}</span>
+      {% elif b.status == "Pending Cancellation" %}
+        <span style="background:#fff7ed;color:#c2410c;border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;">⏳ Pending Cancellation</span>
       {% else %}
         <span class="badge-status-cancelled">{{ b.status }}</span>
       {% endif %}
@@ -59,8 +61,23 @@
           <div class="fw-bold" style="color:var(--primary);">₱{{ "%.2f"|format(b.total) }}</div>
         </div>
         <div class="col-md-1 text-end">
+          {% if b.status == "Confirmed" %}
+          <button class="btn btn-ghost btn-sm px-3" data-bs-toggle="collapse" data-bs-target="#cancel-{{ b.id }}">
+            <i class="bi bi-x-lg"></i>
+          </button>
+          {% endif %}
         </div>
       </div>
+      {% if b.status == "Confirmed" %}
+      <div class="collapse mt-3" id="cancel-{{ b.id }}">
+        <form method="post" action="{{ url_for('cancel', booking_id=b.id) }}">
+          <div class="input-group">
+            <input type="text" name="reason" class="form-control" placeholder="Reason for cancellation..." required/>
+            <button type="submit" class="btn btn-danger">Submit Request</button>
+          </div>
+        </form>
+      </div>
+      {% endif %}
     </div>
   </div>
   {% endfor %}

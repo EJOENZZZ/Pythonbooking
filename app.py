@@ -233,10 +233,13 @@ def my_bookings():
 @login_required
 def cancel(booking_id):
     booking = db.get_booking(booking_id)
-    if booking and booking["user_id"] == session["user_id"]:
-        db.increment_seats(booking["trip_id"], booking["passengers"])
-        db.cancel_booking(booking_id)
-        flash(f"Booking #{booking_id} has been cancelled.", "success")
+    if booking and booking["user_id"] == session["user_id"] and booking["status"] == "Confirmed":
+        reason = request.form.get("reason", "").strip()
+        if not reason:
+            flash("Please provide a reason for cancellation.", "danger")
+            return redirect(url_for("my_bookings"))
+        db.request_cancellation(booking_id, reason)
+        flash(f"Cancellation request for booking #{booking_id} has been submitted. Please wait for admin approval.", "info")
     else:
         flash("Booking not found.", "danger")
     return redirect(url_for("my_bookings"))
@@ -334,8 +337,15 @@ def admin_cancel(booking_id):
     booking = db.get_booking(booking_id)
     if booking:
         db.increment_seats(booking["trip_id"], booking["passengers"])
-        db.cancel_booking(booking_id)
+        db.confirm_cancellation(booking_id)
         flash(f"Booking #{booking_id} cancelled.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/reject-cancel/<booking_id>", methods=["POST"])
+@admin_required
+def admin_reject_cancel(booking_id):
+    db.reject_cancellation(booking_id)
+    flash(f"Cancellation request for #{booking_id} rejected.", "info")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/trip/add", methods=["GET", "POST"])

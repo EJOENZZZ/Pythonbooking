@@ -71,7 +71,8 @@ create table if not exists bookings (
   phone           text not null,
   passengers      int not null check (passengers >= 1),
   total           numeric(10,2) not null check (total >= 0),
-  status          text not null default 'Confirmed' check (status in ('Confirmed', 'Cancelled')),
+  status          text not null default 'Confirmed' check (status in ('Confirmed', 'Cancelled', 'Pending Cancellation')),
+  cancel_reason   text,
   booked_at       timestamp default now()
 );
 
