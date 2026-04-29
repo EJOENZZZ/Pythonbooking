@@ -18,14 +18,14 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-4">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select" onchange="filterTrips()">
+          <select id="f-from" class="form-select" onchange="filterTrips(false)">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
         <div class="col-md-4">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select" onchange="filterTrips()">
+          <select id="f-to" class="form-select" onchange="filterTrips(false)">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
           </select>
@@ -35,7 +35,7 @@
           <input type="number" id="f-pax" class="form-control" value="1" min="1" max="10"/>
         </div>
         <div class="col-md-2">
-          <button onclick="filterTrips()" class="btn btn-primary-custom w-100 py-2">
+          <button onclick="filterTrips(true)" class="btn btn-primary-custom w-100 py-2">
             <i class="bi bi-search me-1"></i> Search
           </button>
         </div>
@@ -52,28 +52,31 @@ function setType(type) {
   document.getElementById('all-tab').classList.toggle('active', type === '');
   document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
   document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
-  filterTrips();
+  filterTrips(false);
 }
 
-function filterTrips() {
+function filterTrips(scroll = true) {
   const from = document.getElementById('f-from').value;
   const to   = document.getElementById('f-to').value;
+
+  let flightCount = 0, ferryCount = 0;
 
   document.querySelectorAll('.trip-card').forEach(card => {
     const matchType = !activeType || card.dataset.type === activeType;
     const matchFrom = !from || card.dataset.from === from;
     const matchTo   = !to   || card.dataset.to   === to;
-    card.style.display = (matchType && matchFrom && matchTo) ? '' : 'none';
+    const show = matchType && matchFrom && matchTo;
+    card.style.display = show ? '' : 'none';
+    if (show && card.dataset.type === 'plane') flightCount++;
+    if (show && card.dataset.type === 'ferry') ferryCount++;
   });
 
-  ['section-flights','section-ferries'].forEach(id => {
-    const sec = document.getElementById(id);
-    if (!sec) return;
-    const visible = sec.querySelectorAll('.trip-card:not([style*="none"])');
-    sec.style.display = visible.length ? '' : 'none';
-  });
+  const sf = document.getElementById('section-flights');
+  const sw = document.getElementById('section-ferries');
+  if (sf) sf.style.display = flightCount ? '' : 'none';
+  if (sw) sw.style.display = ferryCount  ? '' : 'none';
 
-  document.getElementById('trips-section').scrollIntoView({behavior:'smooth'});
+  if (scroll) document.getElementById('trips-section').scrollIntoView({behavior:'smooth'});
 }
 </script>
 
