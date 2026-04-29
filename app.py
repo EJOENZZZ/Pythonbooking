@@ -110,6 +110,9 @@ def index():
         all_cities = sorted(set(origins + dests))
         flights = [t for t in trips if t["type"] == "plane"]
         ferries = [t for t in trips if t["type"] == "ferry"]
+        # attach available dates to each trip
+        for t in flights + ferries:
+            t["available_dates"] = db.get_trip_dates(t["id"])
     except Exception as e:
         app.logger.error(f"DB error on index: {e}")
         origins, dests, all_cities, flights, ferries = [], [], [], [], []

@@ -18,14 +18,14 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-4">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select">
+          <select id="f-from" class="form-select" onchange="filterTrips()">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
         <div class="col-md-4">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select">
+          <select id="f-to" class="form-select" onchange="filterTrips()">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
           </select>
@@ -106,7 +106,11 @@ function filterTrips() {
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
           </div>
-          <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ t.departure[:10] }}</small>
+          <div class="mt-2 d-flex flex-wrap gap-1">
+            {% for d in t.available_dates %}
+            <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;"><i class="bi bi-calendar3 me-1"></i>{{ d }}</span>
+            {% endfor %}
+          </div>
         </div>
         <div class="col-md-2 text-center">
           <span class="seats-pill"><i class="bi bi-person-check me-1"></i>{{ t.seats }} seats</span>
@@ -152,7 +156,11 @@ function filterTrips() {
               <div class="time-label">{{ t.arrival[11:16] if t.arrival|length > 10 else t.arrival }}</div>
             </div>
           </div>
-          <small class="text-muted"><i class="bi bi-calendar3 me-1"></i>{{ t.departure[:10] }}</small>
+          <div class="mt-2 d-flex flex-wrap gap-1">
+            {% for d in t.available_dates %}
+            <span class="badge rounded-pill" style="background:#f1f5f9;color:#475569;font-size:.72rem;font-weight:600;"><i class="bi bi-calendar3 me-1"></i>{{ d }}</span>
+            {% endfor %}
+          </div>
         </div>
         <div class="col-md-2 text-center">
           <span class="seats-pill"><i class="bi bi-person-check me-1"></i>{{ t.seats }} seats</span>
