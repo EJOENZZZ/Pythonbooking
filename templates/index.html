@@ -78,13 +78,11 @@ function applyFilters() {
 function showDates(btn, tripId) {
   const card = btn.closest('.trip-card');
   const dates = card.querySelector('.date-pills');
-  if (dates.style.display === 'none' || dates.style.display === '') {
-    dates.style.display = 'flex';
-    btn.innerHTML = 'Hide Dates <i class="bi bi-chevron-up ms-1"></i>';
-  } else {
-    dates.style.display = 'none';
-    btn.innerHTML = 'View Dates <i class="bi bi-calendar3 ms-1"></i>';
-  }
+  const visible = dates.style.display === 'flex';
+  dates.style.display = visible ? 'none' : 'flex';
+  btn.innerHTML = visible
+    ? 'View Dates <i class="bi bi-calendar3 ms-1"></i>'
+    : 'Hide Dates <i class="bi bi-chevron-up ms-1"></i>';
 }
 </script>
 
