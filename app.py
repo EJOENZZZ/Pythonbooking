@@ -92,8 +92,15 @@ def login():
     if request.method == "POST":
         email    = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
+        role     = request.form.get("role", "user")
         user = db.login_user(email, password)
         if user:
+            if role == "admin" and not user.get("is_admin"):
+                flash("This account is not an admin.", "danger")
+                return render_template("login.html")
+            if role == "user" and user.get("is_admin"):
+                flash("Please use the Admin tab to log in as admin.", "warning")
+                return render_template("login.html")
             session["user_id"]    = user["id"]
             session["user_name"]  = user["full_name"]
             session["user_email"] = email

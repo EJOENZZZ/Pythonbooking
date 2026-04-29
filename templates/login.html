@@ -6,9 +6,25 @@
     <div class="text-center mb-4">
       <div class="auth-logo-wrap auth-logo-red"><i class="bi bi-airplane-fill" style="color:var(--primary);font-size:1.6rem;"></i></div>
       <h2 class="auth-heading">Welcome back</h2>
-      <p class="auth-sub mt-1">Log in to manage your bookings</p>
+      <p class="auth-sub mt-1">Log in to your account</p>
     </div>
+
+    <!-- Login Type Tabs -->
+    <div class="d-flex mb-4 rounded overflow-hidden border">
+      <button onclick="setRole('user')" id="tab-user"
+        class="btn w-50 py-2 fw-bold"
+        style="border-radius:0;background:var(--primary);color:#fff;border:none;">
+        <i class="bi bi-person-fill me-1"></i>User
+      </button>
+      <button onclick="setRole('admin')" id="tab-admin"
+        class="btn w-50 py-2 fw-bold"
+        style="border-radius:0;background:#f1f5f9;color:#64748b;border:none;">
+        <i class="bi bi-shield-lock-fill me-1"></i>Admin
+      </button>
+    </div>
+
     <form method="post">
+      <input type="hidden" name="role" id="role-input" value="user"/>
       <div class="mb-3">
         <label class="form-label">Email / Username</label>
         <div class="input-group">
@@ -37,4 +53,22 @@
     </p>
   </div>
 </div>
+<script>
+function setRole(role) {
+  document.getElementById('role-input').value = role;
+  const userTab  = document.getElementById('tab-user');
+  const adminTab = document.getElementById('tab-admin');
+  if (role === 'user') {
+    userTab.style.background  = 'var(--primary)';
+    userTab.style.color       = '#fff';
+    adminTab.style.background = '#f1f5f9';
+    adminTab.style.color      = '#64748b';
+  } else {
+    adminTab.style.background = 'var(--navy)';
+    adminTab.style.color      = '#fff';
+    userTab.style.background  = '#f1f5f9';
+    userTab.style.color       = '#64748b';
+  }
+}
+</script>
 {% endblock %}
