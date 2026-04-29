@@ -18,14 +18,14 @@
       <div class="row g-3 align-items-end">
         <div class="col-md-4">
           <label class="form-label">From</label>
-          <select id="f-from" class="form-select" onchange="applyFilters()">
+          <select id="f-from" class="form-select" onchange="applyFilters(false)">
             <option value="">Any Origin</option>
             {% for o in origins %}<option value="{{ o }}">{{ o }}</option>{% endfor %}
           </select>
         </div>
         <div class="col-md-4">
           <label class="form-label">To</label>
-          <select id="f-to" class="form-select" onchange="applyFilters()">
+          <select id="f-to" class="form-select" onchange="applyFilters(false)">
             <option value="">Any Destination</option>
             {% for d in destinations %}<option value="{{ d }}">{{ d }}</option>{% endfor %}
           </select>
@@ -35,7 +35,7 @@
           <input type="number" id="f-pax" class="form-control" value="1" min="1" max="10"/>
         </div>
         <div class="col-md-2">
-          <button onclick="applyFilters(); document.getElementById('trips-section').scrollIntoView({behavior:'smooth'})" class="btn btn-primary-custom w-100 py-2">
+          <button onclick="applyFilters(true)" class="btn btn-primary-custom w-100 py-2">
             <i class="bi bi-search me-1"></i> Search
           </button>
         </div>
@@ -52,10 +52,10 @@ function setType(type) {
   document.getElementById('all-tab').classList.toggle('active', type === '');
   document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
   document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
-  applyFilters();
+  applyFilters(false);
 }
 
-function applyFilters() {
+function applyFilters(showDates = false) {
   const from = document.getElementById('f-from').value;
   const to   = document.getElementById('f-to').value;
 
@@ -69,11 +69,10 @@ function applyFilters() {
 
     card.style.display = show ? '' : 'none';
 
-    // show date pills only when this card matches the selected route
-    const routeSelected = from || to;
-    card.querySelectorAll('.date-pill').forEach(p => p.style.display = show ? '' : 'none');
+    // only reveal date pills when Search is clicked
+    card.querySelectorAll('.date-pill').forEach(p => p.style.display = (show && showDates) ? '' : 'none');
     const noDateMsg = card.querySelector('.no-date-msg');
-    if (noDateMsg) noDateMsg.style.display = (!show && routeSelected) ? '' : 'none';
+    if (noDateMsg) noDateMsg.style.display = 'none';
 
     if (show) {
       if (card.dataset.type === 'plane') flightCount++;
@@ -85,6 +84,8 @@ function applyFilters() {
   const sw = document.getElementById('section-ferries');
   if (sf) sf.style.display = (activeType === 'ferry' || flightCount === 0) ? 'none' : '';
   if (sw) sw.style.display = (activeType === 'plane' || ferryCount === 0)  ? 'none' : '';
+
+  if (showDates) document.getElementById('trips-section').scrollIntoView({behavior:'smooth'});
 }
 </script>
 
