@@ -72,36 +72,40 @@ def delete_user(user_id):
 
 
 # ── Trips ─────────────────────────────────────────────────────────────────────
-def _advance_trip(trip):
-    """If departure is in the past, advance it to the next future date keeping the same time."""
+def _expand_trip(trip, days=14):
+    """Return one copy of the trip per day for the next `days` days, keeping the same departure time."""
     if not trip or not trip.get("departure"):
-        return trip
+        return [trip]
     try:
         dep = datetime.fromisoformat(trip["departure"])
         arr = datetime.fromisoformat(trip["arrival"]) if trip.get("arrival") else None
+        duration = (arr - dep) if arr else timedelta(hours=1)
         now = datetime.now()
-        if dep < now:
-            duration = (arr - dep) if arr else timedelta(hours=1)
-            # Advance to today with same time; if still past, use tomorrow
-            new_dep = dep.replace(year=now.year, month=now.month, day=now.day)
+        copies = []
+        for i in range(days):
+            new_dep = now.replace(hour=dep.hour, minute=dep.minute, second=0, microsecond=0) + timedelta(days=i)
             if new_dep < now:
                 new_dep += timedelta(days=1)
-            new_arr = new_dep + duration if arr else None
-            trip = dict(trip)
-            trip["departure"] = new_dep.strftime("%Y-%m-%dT%H:%M:%S")
-            if new_arr:
-                trip["arrival"] = new_arr.strftime("%Y-%m-%dT%H:%M:%S")
+            new_arr = new_dep + duration
+            t = dict(trip)
+            t["departure"] = new_dep.strftime("%Y-%m-%dT%H:%M:%S")
+            t["arrival"]   = new_arr.strftime("%Y-%m-%dT%H:%M:%S")
+            t["_date_key"] = new_dep.strftime("%Y-%m-%d")
+            copies.append(t)
+        return copies
     except Exception:
-        pass
-    return trip
+        return [trip]
 
 def get_all_trips():
     trips = _get("trips", {"order": "departure.asc"})
-    return [_advance_trip(t) for t in trips]
+    expanded = []
+    for t in trips:
+        expanded.extend(_expand_trip(t))
+    return expanded
 
 def get_trip(trip_id):
     res = _get("trips", {"id": f"eq.{trip_id}", "limit": 1})
-    return _advance_trip(res[0]) if res else None
+    return _expand_trip(res[0])[0] if res else None
 
 def search_trips(trip_type, origin, dest, date):
     params = {"order": "departure.asc"}
@@ -112,7 +116,11 @@ def search_trips(trip_type, origin, dest, date):
     if dest:
         params["to_city"] = f"eq.{dest}"
     results = _get("trips", params)
-    return [_advance_trip(t) for t in results if t.get("seats", 0) > 0]
+    expanded = []
+    for t in results:
+        if t.get("seats", 0) > 0:
+            expanded.extend(_expand_trip(t))
+    return expanded
 
 def create_trip(data):
     return _post("trips", data)
