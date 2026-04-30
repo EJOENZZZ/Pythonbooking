@@ -239,9 +239,22 @@ def book(trip_id):
         booking = db.create_booking(booking_data)
         db.decrement_seats(trip_id, passengers)
         session["last_booking_id"] = booking["id"]
-        return redirect(url_for("confirm"))
+        session["last_booking_total"] = booking_data["total"]
+        return redirect(url_for("gcash_payment"))
 
     return render_template("book.html", trip=trip, passengers=passengers, available_dates=available_dates)
+
+
+@app.route("/gcash", methods=["GET", "POST"])
+@login_required
+def gcash_payment():
+    booking_id = session.get("last_booking_id")
+    total      = session.get("last_booking_total", 0)
+    if not booking_id:
+        return redirect(url_for("index"))
+    if request.method == "POST":
+        return redirect(url_for("confirm"))
+    return render_template("gcash.html", total=total, booking_id=booking_id)
 
 
 @app.route("/confirm")

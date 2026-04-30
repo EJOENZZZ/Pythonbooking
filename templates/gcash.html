@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}GCash Payment — TravelBook{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-5 col-lg-4">
+
+    <!-- GCash Card -->
+    <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12);">
+
+      <!-- GCash Header -->
+      <div style="background:#007DFE;padding:1.5rem;text-align:center;">
+        <div style="font-size:2rem;font-weight:900;color:#fff;letter-spacing:-1px;">
+          G<span style="color:#00D4FF;">Cash</span>
+        </div>
+        <div style="color:rgba(255,255,255,.8);font-size:.85rem;margin-top:.3rem;">Secure Payment</div>
+      </div>
+
+      <!-- Amount -->
+      <div style="background:#f0f7ff;padding:1.2rem;text-align:center;border-bottom:1px solid #e2e8f0;">
+        <div style="font-size:.8rem;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Amount to Pay</div>
+        <div style="font-size:2.2rem;font-weight:900;color:#007DFE;margin-top:.3rem;">₱{{ "%.2f"|format(total) }}</div>
+        <div style="font-size:.78rem;color:#94a3b8;">Booking Ref: <strong>{{ booking_id }}</strong></div>
+      </div>
+
+      <!-- Form -->
+      <div style="padding:1.5rem;">
+        <form method="post" id="gcash-form">
+          <div class="mb-3">
+            <label style="font-size:.8rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.8px;">GCash Mobile Number</label>
+            <div class="input-group mt-1">
+              <span class="input-group-text" style="background:#f0f7ff;border-color:#bfdbfe;color:#007DFE;font-weight:700;">+63</span>
+              <input type="tel" class="form-control" placeholder="9XX XXX XXXX" maxlength="10"
+                style="border-color:#bfdbfe;" required/>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label style="font-size:.8rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.8px;">GCash PIN</label>
+            <input type="password" class="form-control mt-1" placeholder="Enter 4-digit PIN" maxlength="4"
+              style="border-color:#bfdbfe;letter-spacing:8px;font-size:1.2rem;" required/>
+          </div>
+
+          <!-- Pay Button -->
+          <button type="submit" id="pay-btn"
+            style="width:100%;background:#007DFE;color:#fff;border:none;border-radius:10px;padding:.9rem;font-size:1rem;font-weight:800;cursor:pointer;">
+            Pay ₱{{ "%.2f"|format(total) }}
+          </button>
+        </form>
+
+        <!-- Processing overlay (hidden by default) -->
+        <div id="processing" style="display:none;text-align:center;padding:1rem 0;">
+          <div class="spinner-border" style="color:#007DFE;width:2.5rem;height:2.5rem;" role="status"></div>
+          <div style="margin-top:.8rem;font-weight:700;color:#007DFE;">Processing payment...</div>
+          <div style="font-size:.8rem;color:#94a3b8;margin-top:.3rem;">Please do not close this page</div>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="{{ url_for('index') }}" style="font-size:.82rem;color:#94a3b8;">Cancel payment</a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="background:#f8fafc;padding:.8rem;text-align:center;border-top:1px solid #e2e8f0;">
+        <small style="color:#94a3b8;font-size:.75rem;">
+          <i class="bi bi-shield-lock-fill me-1" style="color:#007DFE;"></i>
+          Secured by GCash · 256-bit SSL Encryption
+        </small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('gcash-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('pay-btn').style.display = 'none';
+  document.getElementById('processing').style.display = 'block';
+  setTimeout(() => this.submit(), 2500);
+});
+</script>
+{% endblock %}
