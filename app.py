@@ -383,7 +383,14 @@ def admin_cancel(booking_id):
     if booking:
         db.increment_seats(booking["trip_id"], booking["passengers"])
         db.cancel_booking(booking_id)
-        flash(f"Booking #{booking_id} cancelled.", "success")
+        flash(f"Booking #{booking_id} cancelled and deleted.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/reject-cancel/<booking_id>", methods=["POST"])
+@admin_required
+def admin_reject_cancel(booking_id):
+    db.reject_cancellation(booking_id)
+    flash(f"Cancellation request for #{booking_id} rejected.", "info")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/trip/add", methods=["GET", "POST"])
