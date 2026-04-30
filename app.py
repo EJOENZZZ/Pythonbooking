@@ -108,7 +108,7 @@ def verify_signup():
                 session["user_id"]    = user["id"]
                 session["user_name"]  = user["full_name"]
                 session["user_email"] = data["email"]
-                flash(f"Welcome, {user['full_name']}!", "success")
+                flash(f"Welcome, {user['full_name']}! Your account has been verified successfully.", "success")
                 return redirect(url_for("index"))
             except Exception as e:
                 flash(f"Error: {str(e)}", "danger")
