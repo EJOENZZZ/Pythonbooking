@@ -9,15 +9,14 @@
       <p class="text-muted small mb-4">We sent a 6-digit code to <strong>{{ email }}</strong>. Enter it below to complete your registration.</p>
       <form method="post">
         <input type="hidden" name="email" value="{{ email }}"/>
-        <div class="mb-3">
+        <div class="mb-4">
           <label class="form-label">Verification Code</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-123"></i></span>
-            <input type="text" name="code" id="code-input" class="form-control" placeholder="123456" maxlength="6" required/>
+            <input type="text" name="code" class="form-control" placeholder="Enter 6-digit code" maxlength="6" required/>
           </div>
-          <div class="form-text">Auto-submits when you enter all 6 digits.</div>
         </div>
-        <button type="submit" class="btn btn-primary-custom w-100" id="verify-btn">Verify & Create Account</button>
+        <button type="submit" class="btn btn-primary-custom w-100">Verify & Create Account</button>
         <div class="text-center mt-3">
           <a href="{{ url_for('signup') }}" class="text-muted small">Back to Sign Up</a>
         </div>
@@ -46,13 +45,5 @@
     {% endif %}
   {% endfor %}
 {% endwith %}
-
-<script>
-  document.getElementById('code-input').addEventListener('input', function() {
-    if (this.value.length === 6) {
-      document.getElementById('verify-btn').click();
-    }
-  });
-</script>
 
 {% endblock %}
