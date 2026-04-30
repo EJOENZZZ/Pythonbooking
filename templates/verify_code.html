@@ -12,10 +12,10 @@
           <label class="form-label">Reset Code</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-123"></i></span>
-            <input type="text" name="code" class="form-control" placeholder="123456" maxlength="6" required/>
+            <input type="text" name="code" id="code-input" class="form-control" placeholder="123456" maxlength="6" required/>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary-custom w-100">Verify Code</button>
+        <button type="submit" id="verify-btn" class="btn btn-primary-custom w-100">Verify Code</button>
         <div class="text-center mt-3">
           <a href="{{ url_for('forgot_password') }}" class="text-muted small">Resend code</a>
         </div>
@@ -23,4 +23,11 @@
     </div>
   </div>
 </div>
+<script>
+  document.getElementById('code-input').addEventListener('input', function() {
+    if (this.value.length === 6) {
+      document.getElementById('verify-btn').click();
+    }
+  });
+</script>
 {% endblock %}
