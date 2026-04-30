@@ -82,7 +82,7 @@ def signup():
                 "email":     email,
                 "password":  password
             }
-            flash("A verification code has been sent to your email.", "success")
+            flash("A verification code has been sent to your email.", "info")
             return redirect(url_for("verify_signup", email=email))
         except Exception as e:
             flash(f"Failed to send verification email: {str(e)}", "danger")
