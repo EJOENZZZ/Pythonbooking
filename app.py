@@ -19,14 +19,12 @@ if os.environ.get("VERCEL") is None:
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "transport_booking_key")
 
-app.config["MAIL_SERVER"]        = "smtp.gmail.com"
-app.config["MAIL_PORT"]          = 587
-app.config["MAIL_USE_TLS"]       = True
-app.config["MAIL_USE_SSL"]       = False
-app.config["MAIL_DEBUG"]         = False
-app.config["MAIL_USERNAME"]      = "ellajoylocahinherra5@gmail.com"
-app.config["MAIL_PASSWORD"]      = "uvzbczopvdymfkam"
-app.config["MAIL_DEFAULT_SENDER"]= ("TravelBook", "ellajoylocahinherra5@gmail.com")
+app.config["MAIL_SERVER"]   = "smtp.gmail.com"
+app.config["MAIL_PORT"]     = 587
+app.config["MAIL_USE_TLS"]  = True
+app.config["MAIL_USERNAME"] = "ellajoylocahinherra5@gmail.com"
+app.config["MAIL_PASSWORD"] = "uvzbczopvdymfkam"
+app.config["MAIL_DEFAULT_SENDER"] = "ellajoylocahinherra5@gmail.com"
 mail = Mail(app)
 
 
@@ -71,20 +69,52 @@ def signup():
             flash("Email already registered.", "danger")
             return render_template("signup.html")
 
+        code = str(random.randint(100000, 999999))
+        db.save_reset_code(email, code)
         try:
-            user = db.register_user(full_name, email, password)
-            if not user or not isinstance(user, dict) or "id" not in user:
-                flash(f"Registration failed: {user}", "danger")
-                return render_template("signup.html")
-            session["user_id"]    = user["id"]
-            session["user_name"]  = user["full_name"]
-            session["user_email"] = email
-            flash(f"Welcome, {user['full_name']}!", "success")
-            return redirect(url_for("index"))
+            msg = Message("TravelBook — Email Verification Code",
+                          sender="ellajoylocahinherra5@gmail.com",
+                          recipients=[email])
+            msg.body = f"Your verification code is: {code}\n\nEnter this code to complete your registration."
+            mail.send(msg)
+            session["pending_signup"] = {
+                "full_name": full_name,
+                "email":     email,
+                "password":  password
+            }
+            flash("A verification code has been sent to your email.", "success")
+            return redirect(url_for("verify_signup", email=email))
         except Exception as e:
-            flash(f"Error: {str(e)}", "danger")
-            return render_template("signup.html")
+            flash(f"Failed to send verification email: {str(e)}", "danger")
     return render_template("signup.html")
+
+
+@app.route("/verify-signup", methods=["GET", "POST"])
+def verify_signup():
+    email = request.args.get("email") or request.form.get("email", "")
+    if not email or "pending_signup" not in session:
+        return redirect(url_for("signup"))
+    if request.method == "POST":
+        code = request.form.get("code", "").strip()
+        record = db.get_reset_code(email)
+        if record and record["code"] == code:
+            data = session.pop("pending_signup")
+            db.delete_reset_code(email)
+            try:
+                user = db.register_user(data["full_name"], data["email"], data["password"])
+                if not user or not isinstance(user, dict) or "id" not in user:
+                    flash(f"Registration failed: {user}", "danger")
+                    return redirect(url_for("signup"))
+                session["user_id"]    = user["id"]
+                session["user_name"]  = user["full_name"]
+                session["user_email"] = data["email"]
+                flash(f"Welcome, {user['full_name']}!", "success")
+                return redirect(url_for("index"))
+            except Exception as e:
+                flash(f"Error: {str(e)}", "danger")
+                return redirect(url_for("signup"))
+        flash("Invalid code. Please try again.", "danger")
+    return render_template("verify_signup.html", email=email)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -339,15 +369,8 @@ def admin_cancel(booking_id):
     booking = db.get_booking(booking_id)
     if booking:
         db.increment_seats(booking["trip_id"], booking["passengers"])
-        db.confirm_cancellation(booking_id)
+        db.cancel_booking(booking_id)
         flash(f"Booking #{booking_id} cancelled.", "success")
-    return redirect(url_for("admin_dashboard"))
-
-@app.route("/admin/reject-cancel/<booking_id>", methods=["POST"])
-@admin_required
-def admin_reject_cancel(booking_id):
-    db.reject_cancellation(booking_id)
-    flash(f"Cancellation request for #{booking_id} rejected.", "info")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/trip/add", methods=["GET", "POST"])
