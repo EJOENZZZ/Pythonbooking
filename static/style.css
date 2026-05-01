@@ -333,6 +333,7 @@ body {
 .admin-table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .8px; font-weight: 700; background: var(--navy); color: #94a3b8; border: none; padding: .9rem 1rem; white-space: nowrap; }
 .admin-table tbody td { padding: .9rem 1rem; vertical-align: middle; border-color: var(--border); font-size: .9rem; white-space: nowrap; }
 .admin-table tbody tr:hover { background: #f8fafc; }
+.table-responsive { overflow-x: auto; max-width: 100%; }
 .action-btn { display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 8px; font-size: .82rem; font-weight: 600; border: none; cursor: pointer; white-space: nowrap; text-decoration: none; }
 .action-btn-cancel { background: #fff1f2; color: var(--primary); border: 1.5px solid #fecdd3; }
 .action-btn-confirm { background: #dcfce7; color: #15803d; }
