@@ -84,7 +84,7 @@
           <span class="badge bg-danger rounded-pill">{{ bookings|length }}</span>
         </div>
         {% if bookings %}
-        <div class="table-responsive">
+        <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
           <table class="table admin-table mb-0">
             <thead>
               <tr>
@@ -143,13 +143,6 @@
             </tbody>
           </table>
         </div>
-        {% else %}
-        <div class="empty-state"><div class="empty-icon">📭</div><p class="text-muted">No bookings yet.</p></div>
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- Users -->
     <div id="users" style="display:none;">
       <div class="card mb-4">
         <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
@@ -157,7 +150,7 @@
           <span class="badge rounded-pill" style="background:#2563eb;">{{ users|length }}</span>
         </div>
         {% if users %}
-        <div class="table-responsive">
+        <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
           <table class="table admin-table mb-0">
             <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead>
             <tbody>
@@ -201,7 +194,7 @@
           </a>
         </div>
         {% if trips %}
-        <div class="table-responsive">
+        <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
           <table class="table admin-table mb-0">
             <thead>
               <tr><th>Type</th><th>From</th><th>To</th><th>Departure</th><th>Arrival</th><th>Operator</th><th>Price</th><th>Seats</th><th>Action</th></tr>
