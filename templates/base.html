@@ -16,8 +16,9 @@
     <!-- Brand -->
     <a class="navbar-brand" href="{{ url_for('index') }}">
       <i class="bi bi-airplane-fill" style="color:var(--primary);"></i>
-      Travel<span class="brand-dot">Book</span>
+      T<span class="brand-dot">Book</span>
     </a>
+    
 
     <!-- Mobile toggle -->
     <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false">
@@ -25,7 +26,7 @@
     </button>
 
     <!-- Nav items -->
-    <div class="collapse navbar-collapse justify-content-between" id="navMenu">
+    <div class="collapse navbar-collapse" id="navMenu">
       <!-- Left links -->
       <ul class="navbar-nav me-auto align-items-lg-center gap-1 mt-2 mt-lg-0">
 
@@ -55,13 +56,13 @@
       <!-- Right links -->
       <ul class="navbar-nav align-items-lg-center gap-2 mt-2 mt-lg-0">
         {% if session.user_id %}
+          {% if not session.is_admin %}
           <li class="nav-item">
-            {% if not session.is_admin %}
-            <a href="{{ url_for('profile') }}" class="user-pill" style="text-decoration:none;cursor:pointer;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">
-              <i class="bi bi-person-circle me-1"></i>{{ session.user_name[:15] }}{% if session.user_name|length > 15 %}...{% endif %}
+            <a href="{{ url_for('profile') }}" class="user-pill" style="text-decoration:none;cursor:pointer;">
+              <i class="bi bi-person-circle me-1"></i>{{ session.user_name }}
             </a>
-            {% endif %}
           </li>
+          {% endif %}
           <li class="nav-item">
             <a class="btn-nav-outline" href="{{ url_for('logout') }}">Logout</a>
           </li>
