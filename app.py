@@ -58,8 +58,9 @@ def signup():
         email     = request.form.get("email", "").strip()
         password  = request.form.get("password", "").strip()
         confirm   = request.form.get("confirm", "").strip()
+        phone     = request.form.get("phone", "").strip()
 
-        if not full_name or not email or not password:
+        if not full_name or not email or not password or not phone:
             flash("All fields are required.", "danger")
             return render_template("signup.html")
         if password != confirm:
@@ -80,7 +81,8 @@ def signup():
             session["pending_signup"] = {
                 "full_name": full_name,
                 "email":     email,
-                "password":  password
+                "password":  password,
+                "phone":     phone
             }
             flash("A verification code has been sent to your email.", "info")
             return redirect(url_for("verify_signup", email=email))
@@ -101,13 +103,14 @@ def verify_signup():
             data = session.pop("pending_signup")
             db.delete_reset_code(email)
             try:
-                user = db.register_user(data["full_name"], data["email"], data["password"])
+                user = db.register_user(data["full_name"], data["email"], data["password"], data.get("phone", ""))
                 if not user or not isinstance(user, dict) or "id" not in user:
                     flash(f"Registration failed: {user}", "danger")
                     return redirect(url_for("signup"))
                 session["user_id"]    = user["id"]
                 session["user_name"]  = user["full_name"]
                 session["user_email"] = data["email"]
+                session["user_phone"] = data.get("phone", "")
                 flash(f"Welcome, {user['full_name']}! Your account has been verified successfully.", "success")
                 return redirect(url_for("index"))
             except Exception as e:

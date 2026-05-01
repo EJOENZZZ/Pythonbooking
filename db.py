@@ -53,11 +53,12 @@ def get_user_by_email(email):
 def get_all_users():
     return _get("users", {"order": "created_at.desc"})
 
-def register_user(full_name, email, password):
+def register_user(full_name, email, password, phone=""):
     return _post("users", {
         "full_name": full_name,
         "email": email,
         "password": hash_password(password),
+        "phone": phone,
         "is_admin": False
     })
 
