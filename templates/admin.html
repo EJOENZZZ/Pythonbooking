@@ -88,15 +88,8 @@
           <table class="table admin-table mb-0">
             <thead>
               <tr>
-                <th>Ref</th>
-                <th>Passenger</th>
-                <th>Route</th>
-                <th>Type</th>
-                <th>Date</th>
-                <th>Pax</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Action</th>
+                <th>Ref</th><th>Passenger</th><th>Route</th><th>Type</th>
+                <th>Date</th><th>Pax</th><th>Total</th><th>Status</th><th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -143,6 +136,13 @@
             </tbody>
           </table>
         </div>
+        {% else %}
+        <div class="empty-state"><div class="empty-icon">📭</div><p class="text-muted">No bookings yet.</p></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Users -->
     <div id="users" style="display:none;">
       <div class="card mb-4">
         <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
