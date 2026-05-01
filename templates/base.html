@@ -56,8 +56,8 @@
       <ul class="navbar-nav align-items-lg-center gap-2 mt-2 mt-lg-0">
         {% if session.user_id %}
           <li class="nav-item">
-            <a href="{{ url_for('profile') }}" class="user-pill" style="text-decoration:none;cursor:pointer;">
-              <i class="bi bi-person-circle me-1"></i>{{ session.user_name }}
+            <a href="{{ url_for('profile') }}" class="user-pill" style="text-decoration:none;cursor:pointer;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">
+              <i class="bi bi-person-circle me-1"></i>{{ session.user_name[:15] }}{% if session.user_name|length > 15 %}...{% endif %}
             </a>
           </li>
           <li class="nav-item">
