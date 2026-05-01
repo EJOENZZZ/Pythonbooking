@@ -321,9 +321,12 @@ body {
 .bk-ref { color: var(--gold); font-weight: 800; font-size: 1rem; letter-spacing: 1px; }
 
 /* Admin */
-.stat-card { border-radius: var(--radius); padding: 1.6rem; color: #fff; position: relative; overflow: hidden; background: linear-gradient(135deg, var(--navy), var(--navy-3)); border: 1px solid rgba(255,255,255,.08); }
+.stat-card { border-radius: var(--radius); padding: 1.6rem; color: #fff; position: relative; overflow: hidden; border: none; box-shadow: 0 4px 16px rgba(0,0,0,.12); }
 .stat-card::after { content: attr(data-icon); position:absolute; right:.8rem; bottom:-.4rem; font-size:4rem; opacity:.12; }
-.stat-red, .stat-blue, .stat-green, .stat-orange { background: linear-gradient(135deg, var(--navy), var(--navy-3)); }
+.stat-red    { background: linear-gradient(135deg,#e63946,#ff6b6b); }
+.stat-blue   { background: linear-gradient(135deg,#0077b6,#00b4d8); }
+.stat-green  { background: linear-gradient(135deg,#2a9d8f,#52b788); }
+.stat-orange { background: linear-gradient(135deg,#f4a261,#e76f51); }
 .stat-num { font-size: 2.4rem; font-weight: 800; line-height: 1; }
 .stat-lbl { font-size: .85rem; opacity: .8; margin-top: .3rem; }
 .admin-table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .8px; font-weight: 700; background: var(--navy); color: #94a3b8; border: none; padding: .9rem 1rem; }
