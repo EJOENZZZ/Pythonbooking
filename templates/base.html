@@ -56,9 +56,15 @@
       <ul class="navbar-nav align-items-lg-center gap-2 mt-2 mt-lg-0">
         {% if session.user_id %}
           <li class="nav-item">
+            {% if session.is_admin %}
+            <span class="user-pill">
+              <i class="bi bi-person-circle me-1"></i>{{ session.user_name[:15] }}{% if session.user_name|length > 15 %}...{% endif %}
+            </span>
+            {% else %}
             <a href="{{ url_for('profile') }}" class="user-pill" style="text-decoration:none;cursor:pointer;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;">
               <i class="bi bi-person-circle me-1"></i>{{ session.user_name[:15] }}{% if session.user_name|length > 15 %}...{% endif %}
             </a>
+            {% endif %}
           </li>
           <li class="nav-item">
             <a class="btn-nav-outline" href="{{ url_for('logout') }}">Logout</a>
