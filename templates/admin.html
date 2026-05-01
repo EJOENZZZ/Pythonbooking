@@ -4,46 +4,46 @@
 <script>
   let timer = setTimeout(() => location.reload(), 30000);
   document.addEventListener('mousemove', () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
-  document.addEventListener('click', () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
-  document.addEventListener('scroll', () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
+  document.addEventListener('click',     () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
+  document.addEventListener('scroll',    () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
 </script>
 
 <div class="d-flex gap-4">
 
   <!-- Sidebar -->
-  <div style="width:240px;flex-shrink:0;">
+  <div style="width:220px;flex-shrink:0;">
     <div class="sticky-top" style="top:80px;">
-      <div style="background:#fff;border-radius:14px;padding:.6rem;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid var(--border);">
-        <div style="font-size:.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;padding:.4rem .8rem .6rem;">Navigation</div>
+      <div style="background:#fff;border-radius:14px;padding:.5rem;box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid var(--border);">
+        <div style="font-size:.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;padding:.5rem .8rem .4rem;">Menu</div>
         <a href="#" onclick="show('bookings')" id="nav-bookings" class="admin-nav-link active">
-          <div class="admin-nav-icon" style="background:#fef3c7;"><i class="bi bi-ticket-perforated-fill" style="color:#d97706;"></i></div>
+          <div class="admin-nav-icon" style="background:#fff7ed;"><i class="bi bi-ticket-perforated-fill" style="color:#ea580c;"></i></div>
           <span>Bookings</span>
-          <span class="ms-auto badge" style="background:#e63946;color:#fff;border-radius:20px;font-size:.7rem;">{{ bookings|length }}</span>
+          <span class="ms-auto" style="background:#e63946;color:#fff;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;">{{ bookings|length }}</span>
         </a>
         <a href="#" onclick="show('users')" id="nav-users" class="admin-nav-link">
-          <div class="admin-nav-icon" style="background:#eff6ff;"><i class="bi bi-people-fill" style="color:var(--blue);"></i></div>
+          <div class="admin-nav-icon" style="background:#eff6ff;"><i class="bi bi-people-fill" style="color:#2563eb;"></i></div>
           <span>Users</span>
-          <span class="ms-auto badge" style="background:var(--blue);color:#fff;border-radius:20px;font-size:.7rem;">{{ users|length }}</span>
+          <span class="ms-auto" style="background:#2563eb;color:#fff;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;">{{ users|length }}</span>
         </a>
         <a href="#" onclick="show('trips')" id="nav-trips" class="admin-nav-link">
-          <div class="admin-nav-icon" style="background:#f0fdf4;"><i class="bi bi-airplane-fill" style="color:var(--teal);"></i></div>
+          <div class="admin-nav-icon" style="background:#f0fdf4;"><i class="bi bi-airplane-fill" style="color:#16a34a;"></i></div>
           <span>Trips</span>
-          <span class="ms-auto badge" style="background:var(--teal);color:#fff;border-radius:20px;font-size:.7rem;">{{ trips|length }}</span>
+          <span class="ms-auto" style="background:#16a34a;color:#fff;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;">{{ trips|length }}</span>
         </a>
       </div>
     </div>
   </div>
 
   <!-- Main Content -->
-  <div class="flex-grow-1" style="min-width:0;overflow:hidden;">
+  <div class="flex-grow-1" style="min-width:0;">
 
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4 p-3" style="background:linear-gradient(135deg,var(--navy),var(--navy-3));border-radius:14px;">
+    <div class="d-flex justify-content-between align-items-center mb-4 px-4 py-3" style="background:linear-gradient(135deg,var(--navy),var(--navy-3));border-radius:14px;">
       <div>
         <h5 class="fw-bold mb-0" style="color:#fff;"><i class="bi bi-shield-lock-fill me-2" style="color:var(--primary);"></i>Admin Dashboard</h5>
         <small style="color:#64748b;">Full control over bookings, users and trips</small>
       </div>
-      <span class="user-pill" style="background:rgba(230,57,70,.1);color:#fff;border-color:rgba(230,57,70,.2);">
+      <span style="background:rgba(230,57,70,.15);color:#fca5a5;border:1px solid rgba(230,57,70,.25);border-radius:30px;padding:5px 14px;font-size:.82rem;font-weight:600;">
         <i class="bi bi-person-fill-gear me-1"></i>{{ session.user_name }}
       </span>
     </div>
@@ -79,32 +79,45 @@
     <!-- Bookings -->
     <div id="bookings">
       <div class="card mb-4">
-        <div class="d-flex justify-content-between align-items-center p-4 pb-2">
-          <div class="section-title mb-0"><i class="bi bi-ticket-perforated-fill text-danger"></i>All Bookings</div>
+        <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+          <div class="fw-bold" style="font-size:.95rem;"><i class="bi bi-ticket-perforated-fill me-2 text-danger"></i>All Bookings</div>
           <span class="badge bg-danger rounded-pill">{{ bookings|length }}</span>
         </div>
         {% if bookings %}
-        <div class="table-responsive" style="border-bottom: 6px solid #f1f5f9;"><th>Passenger</th><th>Route</th><th>Type</th><th>Date</th><th>Pax</th><th>Total</th><th>Status</th><th>Action</th></tr>
+        <div class="table-responsive">
+          <table class="table admin-table mb-0">
+            <thead>
+              <tr>
+                <th>Ref</th>
+                <th>Passenger</th>
+                <th>Route</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Pax</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
             </thead>
             <tbody>
               {% for b in bookings %}
               <tr>
-                <td><code style="color:var(--primary);font-weight:700;">{{ b.id }}</code></td>
+                <td><code style="color:var(--primary);font-weight:700;font-size:.8rem;">{{ b.id }}</code></td>
                 <td>
-                  <div class="fw-semibold">{{ b.passenger_name }}</div>
-                  <small class="text-muted">{{ b.email }}</small>
+                  <div class="fw-semibold" style="font-size:.82rem;">{{ b.passenger_name }}</div>
+                  <div style="font-size:.72rem;color:#94a3b8;">{{ b.email }}</div>
                 </td>
-                <td><strong>{{ b.from_city }}</strong> → <strong>{{ b.to_city }}</strong></td>
+                <td style="font-size:.82rem;"><strong>{{ b.from_city }}</strong> → <strong>{{ b.to_city }}</strong></td>
                 <td>{% if b.type == "plane" %}<span class="badge-plane">✈️ Plane</span>{% else %}<span class="badge-ferry">⛴️ Ferry</span>{% endif %}</td>
-                <td>{{ b.departure[:10] }}</td>
-                <td>{{ b.passengers }}</td>
-                <td class="fw-bold" style="color:var(--primary);">₱{{ "%.2f"|format(b.total) }}</td>
+                <td style="font-size:.82rem;">{{ b.departure[:10] }}</td>
+                <td style="font-size:.82rem;">{{ b.passengers }}</td>
+                <td style="font-size:.82rem;font-weight:700;color:var(--primary);">₱{{ "%.2f"|format(b.total) }}</td>
                 <td>
                   {% if b.status == "Confirmed" %}
                   <span class="badge-status-confirmed">Confirmed</span>
                   {% elif b.status == "Pending Cancellation" %}
-                  <span style="background:#fff7ed;color:#c2410c;border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:700;">⏳ Pending</span>
-                  {% if b.cancel_reason %}<div style="font-size:.72rem;color:#94a3b8;margin-top:3px;">"{{ b.cancel_reason }}"</div>{% endif %}
+                  <span style="background:#fff7ed;color:#c2410c;border-radius:20px;padding:2px 8px;font-size:.72rem;font-weight:700;">⏳ Pending</span>
+                  {% if b.cancel_reason %}<div style="font-size:.7rem;color:#94a3b8;margin-top:2px;">"{{ b.cancel_reason }}"</div>{% endif %}
                   {% else %}
                   <span class="badge-status-cancelled">Cancelled</span>
                   {% endif %}
@@ -139,9 +152,9 @@
     <!-- Users -->
     <div id="users" style="display:none;">
       <div class="card mb-4">
-        <div class="d-flex justify-content-between align-items-center p-4 pb-2">
-          <div class="section-title mb-0"><i class="bi bi-people-fill" style="color:var(--blue);"></i>Registered Users</div>
-          <span class="badge rounded-pill" style="background:var(--blue);">{{ users|length }}</span>
+        <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+          <div class="fw-bold" style="font-size:.95rem;"><i class="bi bi-people-fill me-2" style="color:#2563eb;"></i>Registered Users</div>
+          <span class="badge rounded-pill" style="background:#2563eb;">{{ users|length }}</span>
         </div>
         {% if users %}
         <div class="table-responsive">
@@ -150,16 +163,16 @@
             <tbody>
               {% for u in users %}
               <tr>
-                <td class="fw-semibold">{{ u.full_name }}</td>
-                <td class="text-muted">{{ u.email }}</td>
+                <td class="fw-semibold" style="font-size:.82rem;">{{ u.full_name }}</td>
+                <td style="font-size:.82rem;color:#64748b;">{{ u.email }}</td>
                 <td>
                   {% if u.is_admin %}
-                  <span style="background:#fff1f2;color:var(--primary);border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;"><i class="bi bi-shield-fill me-1"></i>Admin</span>
+                  <span style="background:#fff1f2;color:var(--primary);border-radius:20px;padding:2px 10px;font-size:.72rem;font-weight:700;"><i class="bi bi-shield-fill me-1"></i>Admin</span>
                   {% else %}
                   <span class="badge-status-cancelled"><i class="bi bi-person me-1"></i>User</span>
                   {% endif %}
                 </td>
-                <td>{{ u.created_at[:10] if u.created_at else "—" }}</td>
+                <td style="font-size:.82rem;">{{ u.created_at[:10] if u.created_at else "—" }}</td>
                 <td>
                   {% if not u.is_admin %}
                   <form method="post" action="{{ url_for('admin_delete_user', user_id=u.id) }}" onsubmit="return confirm('Remove this user?');">
@@ -181,8 +194,8 @@
     <!-- Trips -->
     <div id="trips" style="display:none;">
       <div class="card mb-4">
-        <div class="d-flex justify-content-between align-items-center p-4 pb-2">
-          <div class="section-title mb-0"><i class="bi bi-airplane" style="color:var(--teal);"></i>Trips</div>
+        <div class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom">
+          <div class="fw-bold" style="font-size:.95rem;"><i class="bi bi-airplane me-2" style="color:#16a34a;"></i>Trips</div>
           <a href="{{ url_for('admin_add_trip') }}" class="btn btn-primary btn-sm px-3">
             <i class="bi bi-plus-lg me-1"></i>Add Trip
           </a>
@@ -197,13 +210,13 @@
               {% for t in trips %}
               <tr>
                 <td>{% if t.type == "plane" %}<span class="badge-plane">✈️ Plane</span>{% else %}<span class="badge-ferry">⛴️ Ferry</span>{% endif %}</td>
-                <td>{{ t.from_city }}</td>
-                <td>{{ t.to_city }}</td>
-                <td>{{ t.departure[:16] }}</td>
-                <td>{{ t.arrival[:16] }}</td>
-                <td>{{ t.operator }}</td>
-                <td>₱{{ "%.2f"|format(t.price) }}</td>
-                <td>{{ t.seats }}</td>
+                <td style="font-size:.82rem;">{{ t.from_city }}</td>
+                <td style="font-size:.82rem;">{{ t.to_city }}</td>
+                <td style="font-size:.82rem;">{{ t.departure[:16] }}</td>
+                <td style="font-size:.82rem;">{{ t.arrival[:16] }}</td>
+                <td style="font-size:.82rem;">{{ t.operator }}</td>
+                <td style="font-size:.82rem;font-weight:700;">₱{{ "%.2f"|format(t.price) }}</td>
+                <td style="font-size:.82rem;">{{ t.seats }}</td>
                 <td>
                   <div class="d-flex gap-1">
                     <a href="{{ url_for('admin_edit_trip', trip_id=t.id) }}" class="action-btn action-btn-edit">
@@ -230,17 +243,17 @@
 
 <style>
 .admin-nav-link {
-  display: flex; align-items: center; gap: .7rem;
-  padding: .6rem .8rem; border-radius: 10px;
-  color: var(--text); font-weight: 600; font-size: .88rem;
-  text-decoration: none; transition: all .2s; margin-bottom: 2px;
+  display:flex; align-items:center; gap:.6rem;
+  padding:.55rem .75rem; border-radius:10px;
+  color:var(--text); font-weight:600; font-size:.85rem;
+  text-decoration:none; transition:all .15s; margin-bottom:2px;
 }
-.admin-nav-link:hover { background: #f8fafc; }
-.admin-nav-link.active { background: #fff1f2; color: var(--primary); }
+.admin-nav-link:hover { background:#f8fafc; }
+.admin-nav-link.active { background:#fff1f2; color:var(--primary); }
 .admin-nav-icon {
-  width: 32px; height: 32px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: .9rem; flex-shrink: 0;
+  width:30px; height:30px; border-radius:7px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; flex-shrink:0;
 }
 </style>
 
