@@ -59,8 +59,8 @@ body {
   color: #fff !important;
   border: 1.5px solid rgba(255,255,255,.25);
   border-radius: var(--radius-sm);
-  padding: 10px 30px;
-  font-weight: 800;
+  padding: 7px 20px;
+  font-weight: 600;
   font-size: .88rem;
   transition: all .2s;
   text-decoration: none;
