@@ -16,7 +16,7 @@
     <!-- Brand -->
     <a class="navbar-brand" href="{{ url_for('index') }}">
       <i class="bi bi-airplane-fill" style="color:var(--primary);"></i>
-      T<span class="brand-dot">Book</span>
+      Travel<span class="brand-dot">Book</span>
     </a>
     
 
@@ -54,7 +54,7 @@
       </ul>
 
       <!-- Right links -->
-      <ul class="navbar-nav align-items-lg-center gap-2 mt-2 mt-lg-0">
+      <ul class="navbar-nav align-items-lg-center gap-10 mt-2 mt-lg-0">
         {% if session.user_id %}
           {% if not session.is_admin %}
           <li class="nav-item">
