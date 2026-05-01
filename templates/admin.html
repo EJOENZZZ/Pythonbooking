@@ -2,7 +2,10 @@
 {% block title %}Admin Dashboard — TravelBook{% endblock %}
 {% block content %}
 <script>
-  setTimeout(() => location.reload(), 5000);
+  let timer = setTimeout(() => location.reload(), 30000);
+  document.addEventListener('mousemove', () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
+  document.addEventListener('click', () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
+  document.addEventListener('scroll', () => { clearTimeout(timer); timer = setTimeout(() => location.reload(), 30000); });
 </script>
 
 <div class="d-flex gap-4">
