@@ -23,34 +23,6 @@
         <div style="color:#64748b;font-size:.75rem;margin-top:.2rem;">Administrator</div>
       </div>
 
-      <!-- Stats -->
-      <div class="row g-2 mb-3">
-        <div class="col-6">
-          <div style="background:#fff1f2;border-radius:10px;padding:.7rem;text-align:center;">
-            <div style="font-size:1.3rem;font-weight:800;color:var(--primary);">{{ bookings|length }}</div>
-            <div style="font-size:.7rem;color:#94a3b8;font-weight:600;">Bookings</div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div style="background:#eff6ff;border-radius:10px;padding:.7rem;text-align:center;">
-            <div style="font-size:1.3rem;font-weight:800;color:var(--blue);">{{ users|length }}</div>
-            <div style="font-size:.7rem;color:#94a3b8;font-weight:600;">Users</div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div style="background:#f0fdf4;border-radius:10px;padding:.7rem;text-align:center;">
-            <div style="font-size:1.3rem;font-weight:800;color:var(--teal);">{{ trips|length }}</div>
-            <div style="font-size:.7rem;color:#94a3b8;font-weight:600;">Trips</div>
-          </div>
-        </div>
-        <div class="col-6">
-          <div style="background:#fff7ed;border-radius:10px;padding:.7rem;text-align:center;">
-            <div style="font-size:.85rem;font-weight:800;color:#d97706;">₱{{ "{:,.0f}".format(bookings|sum(attribute='total')) }}</div>
-            <div style="font-size:.7rem;color:#94a3b8;font-weight:600;">Revenue</div>
-          </div>
-        </div>
-      </div>
-
       <!-- Nav Links -->
       <div style="background:#fff;border-radius:14px;padding:.6rem;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid var(--border);">
         <div style="font-size:.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;padding:.4rem .8rem .6rem;">Navigation</div>
@@ -76,6 +48,34 @@
 
   <!-- Main Content -->
   <div class="flex-grow-1">
+
+    <!-- Stats always visible -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="stat-card stat-red" data-icon="🎫">
+          <div class="stat-num">{{ bookings|length }}</div>
+          <div class="stat-lbl">Total Bookings</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card stat-blue" data-icon="👤">
+          <div class="stat-num">{{ users|length }}</div>
+          <div class="stat-lbl">Registered Users</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card stat-green" data-icon="🗺️">
+          <div class="stat-num">{{ trips|length }}</div>
+          <div class="stat-lbl">Active Trips</div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="stat-card stat-orange" data-icon="💰">
+          <div class="stat-num" style="font-size:1.6rem;">₱{{ "{:,.0f}".format(bookings|sum(attribute='total')) }}</div>
+          <div class="stat-lbl">Total Revenue</div>
+        </div>
+      </div>
+    </div>
 
     <!-- Bookings Section -->
     <div id="bookings">
