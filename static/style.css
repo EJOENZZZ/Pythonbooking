@@ -329,8 +329,9 @@ body {
 .stat-orange { background: linear-gradient(135deg,#f4a261,#e76f51); }
 .stat-num { font-size: 2.4rem; font-weight: 800; line-height: 1; }
 .stat-lbl { font-size: .85rem; opacity: .8; margin-top: .3rem; }
-.admin-table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .8px; font-weight: 700; background: var(--navy); color: #94a3b8; border: none; padding: .9rem 1rem; }
-.admin-table tbody td { padding: .85rem 1rem; vertical-align: middle; border-color: var(--border); font-size: .9rem; }
+.admin-table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .8px; font-weight: 700; background: var(--navy); color: #94a3b8; border: none; padding: .9rem 1rem; white-space: nowrap; }
+.admin-table tbody td { padding: .9rem 1rem; vertical-align: middle; border-color: var(--border); font-size: .9rem; white-space: nowrap; }
+.admin-table { table-layout: fixed; width: 100%; }
 
 /* Alerts */
 .alert { border-radius: var(--radius-sm); border: none; font-weight: 500; font-size: .9rem; }
