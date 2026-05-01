@@ -12,7 +12,6 @@
       <button class="search-tab active" id="all-tab" onclick="setType('')"><i class="bi bi-grid me-1"></i> All</button>
       <button class="search-tab" id="plane-tab" onclick="setType('plane')"><i class="bi bi-airplane-fill me-1"></i> Plane</button>
       <button class="search-tab" id="ferry-tab" onclick="setType('ferry')"><i class="bi bi-water me-1"></i> Ferry</button>
-      <button class="search-tab" id="jeep-tab" onclick="setType('jeep')"><i class="bi bi-truck me-1"></i> Jeep</button>
     </div>
 
     <div class="search-form-wrap">
@@ -53,7 +52,6 @@ function setType(type) {
   document.getElementById('all-tab').classList.toggle('active', type === '');
   document.getElementById('plane-tab').classList.toggle('active', type === 'plane');
   document.getElementById('ferry-tab').classList.toggle('active', type === 'ferry');
-  document.getElementById('jeep-tab').classList.toggle('active', type === 'jeep');
   applyFilters();
 }
 
