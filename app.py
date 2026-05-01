@@ -136,6 +136,7 @@ def login():
             session["user_id"]    = user["id"]
             session["user_name"]  = user["full_name"]
             session["user_email"] = email
+            session["user_phone"] = user.get("phone", "")
             session["is_admin"]   = user.get("is_admin", False)
             flash(f"Welcome back, {user['full_name']}!", "success")
             if user.get("is_admin"):
@@ -350,6 +351,68 @@ def reset_password():
         flash("Password updated! Please log in.", "success")
         return redirect(url_for("login"))
     return render_template("reset_password.html")
+
+
+# ── Profile ──────────────────────────────────────────────────────────────────
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    user = db.get_user(session["user_id"])
+    if request.method == "POST":
+        full_name = request.form.get("full_name", "").strip()
+        phone     = request.form.get("phone", "").strip()
+        db.update_user_profile(session["user_id"], {"full_name": full_name, "phone": phone})
+        session["user_name"]  = full_name
+        session["user_phone"] = phone
+        flash("Profile updated!", "success")
+        return redirect(url_for("profile"))
+    return render_template("profile.html", user=user)
+
+
+@app.route("/profile/change-email", methods=["POST"])
+@login_required
+def change_email_request():
+    new_email = request.form.get("new_email", "").strip()
+    if not new_email:
+        flash("Please enter a new email.", "danger")
+        return redirect(url_for("profile"))
+    if db.get_user_by_email(new_email):
+        flash("Email already in use.", "danger")
+        return redirect(url_for("profile"))
+    code = str(random.randint(100000, 999999))
+    db.save_reset_code(new_email, code)
+    try:
+        msg = Message("TravelBook — Email Change Verification",
+                      sender="ellajoylocahinherra5@gmail.com",
+                      recipients=[new_email])
+        msg.body = f"Your email change verification code is: {code}\n\nEnter this code to confirm your new email."
+        mail.send(msg)
+        session["pending_email"] = new_email
+        flash("A verification code has been sent to your new email.", "info")
+        return redirect(url_for("verify_email_change"))
+    except Exception as e:
+        flash(f"Failed to send email: {str(e)}", "danger")
+        return redirect(url_for("profile"))
+
+
+@app.route("/profile/verify-email", methods=["GET", "POST"])
+@login_required
+def verify_email_change():
+    new_email = session.get("pending_email")
+    if not new_email:
+        return redirect(url_for("profile"))
+    if request.method == "POST":
+        code = request.form.get("code", "").strip()
+        record = db.get_reset_code(new_email)
+        if record and record["code"] == code:
+            db.update_user_profile(session["user_id"], {"email": new_email})
+            db.delete_reset_code(new_email)
+            session["user_email"] = new_email
+            session.pop("pending_email", None)
+            flash("Email updated successfully!", "success")
+            return redirect(url_for("profile"))
+        flash("Invalid code. Please try again.", "danger")
+    return render_template("verify_email_change.html", new_email=new_email)
 
 
 # ── Error Handlers ────────────────────────────────────────────────────────────

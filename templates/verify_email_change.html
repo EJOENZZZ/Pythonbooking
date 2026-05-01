@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Verify New Email — TravelBook{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-5">
+    <div class="card p-4">
+      <h5 class="fw-bold mb-1"><i class="bi bi-envelope-check me-2" style="color:var(--primary);"></i>Verify New Email</h5>
+      <p class="text-muted small mb-4">We sent a 6-digit code to <strong>{{ new_email }}</strong>. Enter it below to confirm your new email.</p>
+      <form method="post">
+        <div class="mb-4">
+          <label class="form-label">Verification Code</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-123"></i></span>
+            <input type="text" name="code" class="form-control" placeholder="Enter 6-digit code" maxlength="6" required/>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary-custom w-100">Confirm New Email</button>
+        <div class="text-center mt-3">
+          <a href="{{ url_for('profile') }}" class="text-muted small">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

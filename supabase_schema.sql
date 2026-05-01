@@ -11,6 +11,7 @@ create table if not exists users (
   email       text not null unique,
   password    text not null,
   is_admin    boolean default false,
+  phone        text,
   created_at  timestamp default now()
 );
 

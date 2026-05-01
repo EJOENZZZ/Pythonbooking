@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}My Profile — TravelBook{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+
+    <h4 class="fw-bold mb-4"><i class="bi bi-person-circle me-2" style="color:var(--primary);"></i>My Profile</h4>
+
+    <!-- Edit Name & Phone -->
+    <div class="card p-4 mb-4">
+      <div class="section-title"><i class="bi bi-person-lines-fill text-danger"></i> Personal Info</div>
+      <form method="post">
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person"></i></span>
+            <input type="text" name="full_name" class="form-control" value="{{ user.full_name }}" required/>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" value="{{ user.email }}" disabled/>
+          </div>
+          <div class="form-text">To change email, use the section below.</div>
+        </div>
+        <div class="mb-4">
+          <label class="form-label">Phone Number</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-phone"></i></span>
+            <input type="tel" name="phone" class="form-control" value="{{ user.phone or '' }}" placeholder="+63 9XX XXX XXXX"/>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary-custom w-100">Save Changes</button>
+      </form>
+    </div>
+
+    <!-- Change Email -->
+    <div class="card p-4 mb-4">
+      <div class="section-title"><i class="bi bi-envelope-check text-danger"></i> Change Email</div>
+      <form method="post" action="{{ url_for('change_email_request') }}">
+        <div class="mb-3">
+          <label class="form-label">New Email Address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input type="email" name="new_email" class="form-control" placeholder="newemail@gmail.com" required/>
+          </div>
+          <div class="form-text">A verification code will be sent to your new email.</div>
+        </div>
+        <button type="submit" class="btn btn-ghost w-100">Send Verification Code</button>
+      </form>
+    </div>
+
+    <a href="{{ url_for('index') }}" class="btn btn-ghost w-100"><i class="bi bi-arrow-left me-1"></i>Back to Home</a>
+
+  </div>
+</div>
+{% endblock %}

@@ -73,6 +73,13 @@ def delete_user(user_id):
 def update_password(email, new_password):
     _patch("users", "email", email, {"password": hash_password(new_password)})
 
+def get_user(user_id):
+    res = _get("users", {"id": f"eq.{user_id}", "limit": 1})
+    return res[0] if res else None
+
+def update_user_profile(user_id, data):
+    _patch("users", "id", user_id, data)
+
 def save_reset_code(email, code):
     # upsert: delete old then insert new
     _delete("reset_codes", "email", email)
