@@ -2,186 +2,248 @@
 {% block title %}Admin Dashboard — TravelBook{% endblock %}
 {% block content %}
 <script>
-  // Auto-refresh every 5 seconds
   setTimeout(() => location.reload(), 5000);
 </script>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <div>
-    <h4 class="fw-bold mb-0"><i class="bi bi-shield-lock-fill me-2" style="color:var(--primary);"></i>Admin Dashboard</h4>
-    <small class="text-muted">Full control over bookings, users and trips</small>
-  </div>
-  <span class="user-pill" style="background:rgba(230,57,70,.1);color:var(--primary);border-color:rgba(230,57,70,.2);">
-    <i class="bi bi-person-fill-gear me-1"></i>{{ session.user_name }}
-  </span>
-</div>
+<div class="d-flex gap-4">
 
-<!-- Stats -->
-<div class="row g-3 mb-4">
-  <div class="col-6 col-md-3">
-    <div class="stat-card stat-red" data-icon="🎫">
-      <div class="stat-num">{{ bookings|length }}</div>
-      <div class="stat-lbl">Total Bookings</div>
+  <!-- Sidebar -->
+  <div style="width:220px;flex-shrink:0;">
+    <div class="card p-3 sticky-top" style="top:80px;">
+      <div class="fw-bold mb-3" style="color:var(--primary);font-size:.85rem;text-transform:uppercase;letter-spacing:1px;">
+        <i class="bi bi-shield-lock-fill me-1"></i>Admin Panel
+      </div>
+      <nav class="d-flex flex-column gap-1">
+        <a href="#stats" onclick="show('stats')" id="nav-stats"
+          class="admin-nav-link active">
+          <i class="bi bi-bar-chart-fill me-2"></i>Overview
+        </a>
+        <a href="#bookings" onclick="show('bookings')" id="nav-bookings"
+          class="admin-nav-link">
+          <i class="bi bi-ticket-perforated-fill me-2"></i>Bookings
+          <span class="badge bg-danger rounded-pill ms-auto">{{ bookings|length }}</span>
+        </a>
+        <a href="#users" onclick="show('users')" id="nav-users"
+          class="admin-nav-link">
+          <i class="bi bi-people-fill me-2"></i>Users
+          <span class="badge rounded-pill ms-auto" style="background:var(--blue);">{{ users|length }}</span>
+        </a>
+        <a href="#trips" onclick="show('trips')" id="nav-trips"
+          class="admin-nav-link">
+          <i class="bi bi-airplane me-2"></i>Trips
+          <span class="badge rounded-pill ms-auto" style="background:var(--teal);">{{ trips|length }}</span>
+        </a>
+      </nav>
+      <hr>
+      <div class="text-muted small text-center">
+        <i class="bi bi-person-fill-gear me-1"></i>{{ session.user_name }}
+      </div>
     </div>
   </div>
-  <div class="col-6 col-md-3">
-    <div class="stat-card stat-blue" data-icon="👤">
-      <div class="stat-num">{{ users|length }}</div>
-      <div class="stat-lbl">Registered Users</div>
+
+  <!-- Main Content -->
+  <div class="flex-grow-1">
+
+    <!-- Stats Section -->
+    <div id="stats">
+      <h5 class="fw-bold mb-3"><i class="bi bi-bar-chart-fill me-2" style="color:var(--primary);"></i>Overview</h5>
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="stat-card stat-red" data-icon="🎫">
+            <div class="stat-num">{{ bookings|length }}</div>
+            <div class="stat-lbl">Total Bookings</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card stat-blue" data-icon="👤">
+            <div class="stat-num">{{ users|length }}</div>
+            <div class="stat-lbl">Registered Users</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card stat-green" data-icon="🗺️">
+            <div class="stat-num">{{ trips|length }}</div>
+            <div class="stat-lbl">Active Trips</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card stat-orange" data-icon="💰">
+            <div class="stat-num" style="font-size:1.6rem;">₱{{ "{:,.0f}".format(bookings|sum(attribute='total')) }}</div>
+            <div class="stat-lbl">Total Revenue</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="col-6 col-md-3">
-    <div class="stat-card stat-green" data-icon="🗺️">
-      <div class="stat-num">{{ trips|length }}</div>
-      <div class="stat-lbl">Active Trips</div>
+
+    <!-- Bookings Section -->
+    <div id="bookings" style="display:none;">
+      <div class="card mb-4">
+        <div class="d-flex justify-content-between align-items-center p-4 pb-2">
+          <div class="section-title mb-0"><i class="bi bi-ticket-perforated-fill text-danger"></i>All Bookings</div>
+          <span class="badge bg-danger rounded-pill">{{ bookings|length }}</span>
+        </div>
+        {% if bookings %}
+        <div class="table-responsive">
+          <table class="table admin-table mb-0">
+            <thead>
+              <tr><th>Ref</th><th>Passenger</th><th>Route</th><th>Type</th><th>Date</th><th>Pax</th><th>Total</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              {% for b in bookings %}
+              <tr>
+                <td><code style="color:var(--primary);font-weight:700;">{{ b.id }}</code></td>
+                <td>
+                  <div class="fw-semibold">{{ b.passenger_name }}</div>
+                  <small class="text-muted">{{ b.email }}</small>
+                </td>
+                <td><strong>{{ b.from_city }}</strong> <i class="bi bi-arrow-right text-muted"></i> <strong>{{ b.to_city }}</strong></td>
+                <td>{% if b.type == "plane" %}<span class="badge-plane">✈️ Plane</span>{% else %}<span class="badge-ferry">⛴️ Ferry</span>{% endif %}</td>
+                <td><small>{{ b.departure[:10] }}</small></td>
+                <td>{{ b.passengers }}</td>
+                <td class="fw-bold" style="color:var(--primary);">₱{{ "%.2f"|format(b.total) }}</td>
+                <td>
+                  {% if b.status == "Confirmed" %}<span class="badge-status-confirmed">Confirmed</span>
+                  {% elif b.status == "Pending Cancellation" %}
+                    <span style="background:#fff7ed;color:#c2410c;border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:700;">⏳ Pending</span>
+                    {% if b.cancel_reason %}<div style="font-size:.75rem;color:#94a3b8;margin-top:3px;">"{{ b.cancel_reason }}"</div>{% endif %}
+                  {% else %}<span class="badge-status-cancelled">Cancelled</span>{% endif %}
+                </td>
+                <td>
+                  {% if b.status == "Pending Cancellation" %}
+                  <form method="post" action="{{ url_for('admin_cancel', booking_id=b.id) }}" style="display:inline;">
+                    <button class="btn btn-danger btn-sm px-2"><i class="bi bi-check-lg me-1"></i>Confirm</button>
+                  </form>
+                  <form method="post" action="{{ url_for('admin_reject_cancel', booking_id=b.id) }}" style="display:inline;">
+                    <button class="btn btn-ghost btn-sm px-2"><i class="bi bi-x-lg me-1"></i>Reject</button>
+                  </form>
+                  {% elif b.status == "Confirmed" %}
+                  <form method="post" action="{{ url_for('admin_cancel', booking_id=b.id) }}">
+                    <button class="btn btn-ghost btn-sm px-3"><i class="bi bi-x-circle me-1"></i>Cancel</button>
+                  </form>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <div class="empty-state"><div class="empty-icon">📭</div><p class="text-muted">No bookings yet.</p></div>
+        {% endif %}
+      </div>
     </div>
-  </div>
-  <div class="col-6 col-md-3">
-    <div class="stat-card stat-orange" data-icon="💰">
-      <div class="stat-num" style="font-size:1.6rem;">₱{{ "{:,.0f}".format(bookings|sum(attribute='total')) }}</div>
-      <div class="stat-lbl">Total Revenue</div>
+
+    <!-- Users Section -->
+    <div id="users" style="display:none;">
+      <div class="card mb-4">
+        <div class="d-flex justify-content-between align-items-center p-4 pb-2">
+          <div class="section-title mb-0"><i class="bi bi-people-fill" style="color:var(--blue);"></i>Registered Users</div>
+          <span class="badge rounded-pill" style="background:var(--blue);">{{ users|length }}</span>
+        </div>
+        {% if users %}
+        <div class="table-responsive">
+          <table class="table admin-table mb-0">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th></th></tr></thead>
+            <tbody>
+              {% for u in users %}
+              <tr>
+                <td class="fw-semibold">{{ u.full_name }}</td>
+                <td class="text-muted">{{ u.email }}</td>
+                <td>
+                  {% if u.is_admin %}
+                    <span style="background:#fff1f2;color:var(--primary);border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;"><i class="bi bi-shield-fill me-1"></i>Admin</span>
+                  {% else %}
+                    <span class="badge-status-cancelled"><i class="bi bi-person me-1"></i>User</span>
+                  {% endif %}
+                </td>
+                <td><small class="text-muted">{{ u.created_at[:10] if u.created_at else "—" }}</small></td>
+                <td>
+                  {% if not u.is_admin %}
+                  <form method="post" action="{{ url_for('admin_delete_user', user_id=u.id) }}" onsubmit="return confirm('Remove this user?');">
+                    <button class="btn btn-ghost btn-sm px-3"><i class="bi bi-person-x me-1"></i>Remove</button>
+                  </form>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <div class="empty-state"><div class="empty-icon">👥</div><p class="text-muted">No users yet.</p></div>
+        {% endif %}
+      </div>
     </div>
+
+    <!-- Trips Section -->
+    <div id="trips" style="display:none;">
+      <div class="card mb-4">
+        <div class="d-flex justify-content-between align-items-center p-4 pb-2">
+          <div class="section-title mb-0"><i class="bi bi-airplane" style="color:var(--teal);"></i>Trips</div>
+          <a href="{{ url_for('admin_add_trip') }}" class="btn btn-primary btn-sm px-3">
+            <i class="bi bi-plus-lg me-1"></i>Add Trip
+          </a>
+        </div>
+        {% if trips %}
+        <div class="table-responsive">
+          <table class="table admin-table mb-0">
+            <thead>
+              <tr><th>Type</th><th>From</th><th>To</th><th>Departure</th><th>Arrival</th><th>Operator</th><th>Price</th><th>Seats</th><th></th></tr>
+            </thead>
+            <tbody>
+              {% for t in trips %}
+              <tr>
+                <td>{% if t.type == "plane" %}<span class="badge-plane">✈️ Plane</span>{% else %}<span class="badge-ferry">⛴️ Ferry</span>{% endif %}</td>
+                <td>{{ t.from_city }}</td>
+                <td>{{ t.to_city }}</td>
+                <td><small>{{ t.departure[:16] }}</small></td>
+                <td><small>{{ t.arrival[:16] }}</small></td>
+                <td>{{ t.operator }}</td>
+                <td>₱{{ "%.2f"|format(t.price) }}</td>
+                <td>{{ t.seats }}</td>
+                <td>
+                  <a href="{{ url_for('admin_edit_trip', trip_id=t.id) }}" class="btn btn-ghost btn-sm px-3"><i class="bi bi-pencil-square me-1"></i>Edit</a>
+                  <form method="post" action="{{ url_for('admin_delete_trip', trip_id=t.id) }}" style="display:inline;" onsubmit="return confirm('Delete this trip?');">
+                    <button class="btn btn-ghost btn-sm px-3"><i class="bi bi-trash me-1"></i>Delete</button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <div class="empty-state"><div class="empty-icon">✈️</div><p class="text-muted">No trips yet.</p></div>
+        {% endif %}
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- Bookings Table -->
-<div class="card mb-4">
-  <div class="d-flex justify-content-between align-items-center p-4 pb-2">
-    <div class="section-title mb-0"><i class="bi bi-ticket-perforated-fill text-danger"></i>All Bookings</div>
-    <span class="badge bg-danger rounded-pill">{{ bookings|length }}</span>
-  </div>
-  {% if bookings %}
-  <div class="table-responsive">
-    <table class="table admin-table mb-0">
-      <thead>
-        <tr>
-          <th>Ref</th><th>Passenger</th><th>Route</th><th>Type</th>
-          <th>Date</th><th>Pax</th><th>Total</th><th>Status</th><th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for b in bookings %}
-        <tr>
-          <td><code style="color:var(--primary);font-weight:700;">{{ b.id }}</code></td>
-          <td>
-            <div class="fw-semibold">{{ b.passenger_name }}</div>
-            <small class="text-muted">{{ b.email }}</small>
-          </td>
-          <td><strong>{{ b.from_city }}</strong> <i class="bi bi-arrow-right text-muted"></i> <strong>{{ b.to_city }}</strong></td>
-          <td>{% if b.type == "plane" %}<span class="badge-plane">✈️ Plane</span>{% else %}<span class="badge-ferry">⛴️ Ferry</span>{% endif %}</td>
-          <td><small>{{ b.departure[:10] }}</small></td>
-          <td>{{ b.passengers }}</td>
-          <td class="fw-bold" style="color:var(--primary);">₱{{ "%.2f"|format(b.total) }}</td>
-          <td>
-            {% if b.status == "Confirmed" %}<span class="badge-status-confirmed">Confirmed</span>
-            {% elif b.status == "Pending Cancellation" %}
-              <span style="background:#fff7ed;color:#c2410c;border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:700;">⏳ Pending</span>
-              {% if b.cancel_reason %}<div style="font-size:.75rem;color:#94a3b8;margin-top:3px;">"{{ b.cancel_reason }}"</div>{% endif %}
-            {% else %}<span class="badge-status-cancelled">Cancelled</span>{% endif %}
-          </td>
-          <td>
-            {% if b.status == "Pending Cancellation" %}
-            <form method="post" action="{{ url_for('admin_cancel', booking_id=b.id) }}" style="display:inline;">
-              <button class="btn btn-danger btn-sm px-2"><i class="bi bi-check-lg me-1"></i>Confirm</button>
-            </form>
-            <form method="post" action="{{ url_for('admin_reject_cancel', booking_id=b.id) }}" style="display:inline;">
-              <button class="btn btn-ghost btn-sm px-2"><i class="bi bi-x-lg me-1"></i>Reject</button>
-            </form>
-            {% elif b.status == "Confirmed" %}
-            <form method="post" action="{{ url_for('admin_cancel', booking_id=b.id) }}">
-              <button class="btn btn-ghost btn-sm px-3"><i class="bi bi-x-circle me-1"></i>Cancel</button>
-            </form>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-    <div class="empty-state"><div class="empty-icon">📭</div><p class="text-muted">No bookings yet.</p></div>
-  {% endif %}
-</div>
+<style>
+.admin-nav-link {
+  display: flex;
+  align-items: center;
+  padding: .6rem .8rem;
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: .88rem;
+  text-decoration: none;
+  transition: all .2s;
+}
+.admin-nav-link:hover { background: #f1f5f9; color: var(--text); }
+.admin-nav-link.active { background: #fff1f2; color: var(--primary); }
+</style>
 
-<!-- Users Table -->
-<div class="card mb-4">
-  <div class="d-flex justify-content-between align-items-center p-4 pb-2">
-    <div class="section-title mb-0"><i class="bi bi-people-fill" style="color:var(--blue);"></i>Registered Users</div>
-    <span class="badge rounded-pill" style="background:var(--blue);">{{ users|length }}</span>
-  </div>
-  {% if users %}
-  <div class="table-responsive">
-    <table class="table admin-table mb-0">
-      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th></th></tr></thead>
-      <tbody>
-        {% for u in users %}
-        <tr>
-          <td class="fw-semibold">{{ u.full_name }}</td>
-          <td class="text-muted">{{ u.email }}</td>
-          <td>
-            {% if u.is_admin %}
-              <span style="background:#fff1f2;color:var(--primary);border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;"><i class="bi bi-shield-fill me-1"></i>Admin</span>
-            {% else %}
-              <span class="badge-status-cancelled"><i class="bi bi-person me-1"></i>User</span>
-            {% endif %}
-          </td>
-          <td><small class="text-muted">{{ u.created_at[:10] if u.created_at else "—" }}</small></td>
-          <td>
-            {% if not u.is_admin %}
-            <form method="post" action="{{ url_for('admin_delete_user', user_id=u.id) }}" onsubmit="return confirm('Remove this user?');">
-              <button class="btn btn-ghost btn-sm px-3"><i class="bi bi-person-x me-1"></i>Remove</button>
-            </form>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-    <div class="empty-state"><div class="empty-icon">👥</div><p class="text-muted">No users yet.</p></div>
-  {% endif %}
-</div>
-
-<!-- Trips Table -->
-<div class="card mb-4">
-  <div class="d-flex justify-content-between align-items-center p-4 pb-2">
-    <div class="section-title mb-0"><i class="bi bi-airplane" style="color:var(--green);"></i>Trips</div>
-    <a href="{{ url_for('admin_add_trip') }}" class="btn btn-primary btn-sm px-3">
-      <i class="bi bi-plus-lg me-1"></i>Add Trip
-    </a>
-  </div>
-  {% if trips %}
-  <div class="table-responsive">
-    <table class="table admin-table mb-0">
-      <thead>
-        <tr><th>Type</th><th>From</th><th>To</th><th>Departure</th><th>Arrival</th><th>Operator</th><th>Price</th><th>Seats</th><th></th></tr>
-      </thead>
-      <tbody>
-        {% for t in trips %}
-        <tr>
-          <td>{% if t.type == "plane" %}<span class="badge-plane">✈️ Plane</span>{% else %}<span class="badge-ferry">⛴️ Ferry</span>{% endif %}</td>
-          <td>{{ t.from_city }}</td>
-          <td>{{ t.to_city }}</td>
-          <td><small>{{ t.departure[:16] }}</small></td>
-          <td><small>{{ t.arrival[:16] }}</small></td>
-          <td>{{ t.operator }}</td>
-          <td>₱{{ "%.2f"|format(t.price) }}</td>
-          <td>{{ t.seats }}</td>
-          <td>
-            <a href="{{ url_for('admin_edit_trip', trip_id=t.id) }}" class="btn btn-ghost btn-sm px-3"><i class="bi bi-pencil-square me-1"></i>Edit</a>
-            <form method="post" action="{{ url_for('admin_delete_trip', trip_id=t.id) }}" style="display:inline;" onsubmit="return confirm('Delete this trip?');">
-              <button class="btn btn-ghost btn-sm px-3"><i class="bi bi-trash me-1"></i>Delete</button>
-            </form>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  {% else %}
-    <div class="empty-state"><div class="empty-icon">✈️</div><p class="text-muted">No trips yet.</p></div>
-  {% endif %}
-</div>
+<script>
+function show(section) {
+  ['stats','bookings','users','trips'].forEach(s => {
+    document.getElementById(s).style.display = s === section ? '' : 'none';
+    document.getElementById('nav-' + s).classList.toggle('active', s === section);
+  });
+}
+</script>
 
 {% endblock %}
