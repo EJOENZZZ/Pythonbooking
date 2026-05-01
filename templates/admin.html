@@ -8,36 +8,42 @@
 <div class="d-flex gap-4">
 
   <!-- Sidebar -->
-  <div style="width:220px;flex-shrink:0;">
-    <div class="card p-3 sticky-top" style="top:80px;">
-      <div class="fw-bold mb-3" style="color:var(--primary);font-size:.85rem;text-transform:uppercase;letter-spacing:1px;">
-        <i class="bi bi-shield-lock-fill me-1"></i>Admin Panel
+  <div style="width:240px;flex-shrink:0;">
+    <div class="sticky-top" style="top:80px;">
+
+      <!-- Admin Info -->
+      <div style="background:linear-gradient(135deg,var(--navy),var(--navy-3));border-radius:14px;padding:1.2rem;margin-bottom:.8rem;text-align:center;">
+        <div style="width:52px;height:52px;background:rgba(230,57,70,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .7rem;">
+          <i class="bi bi-shield-lock-fill" style="color:var(--primary);font-size:1.4rem;"></i>
+        </div>
+        <div style="color:#fff;font-weight:700;font-size:.95rem;">{{ session.user_name }}</div>
+        <div style="color:#64748b;font-size:.75rem;margin-top:.2rem;">Administrator</div>
       </div>
-      <nav class="d-flex flex-column gap-1">
-        <a href="#stats" onclick="show('stats')" id="nav-stats"
-          class="admin-nav-link active">
-          <i class="bi bi-bar-chart-fill me-2"></i>Overview
+
+      <!-- Nav Links -->
+      <div style="background:#fff;border-radius:14px;padding:.6rem;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid var(--border);">
+        <div style="font-size:.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;padding:.4rem .8rem .6rem;">Navigation</div>
+        <a href="#" onclick="show('stats')" id="nav-stats" class="admin-nav-link active">
+          <div class="admin-nav-icon" style="background:#fff1f2;"><i class="bi bi-grid-fill" style="color:var(--primary);"></i></div>
+          <span>Overview</span>
         </a>
-        <a href="#bookings" onclick="show('bookings')" id="nav-bookings"
-          class="admin-nav-link">
-          <i class="bi bi-ticket-perforated-fill me-2"></i>Bookings
-          <span class="badge bg-danger rounded-pill ms-auto">{{ bookings|length }}</span>
+        <a href="#" onclick="show('bookings')" id="nav-bookings" class="admin-nav-link">
+          <div class="admin-nav-icon" style="background:#fef3c7;"><i class="bi bi-ticket-perforated-fill" style="color:#d97706;"></i></div>
+          <span>Bookings</span>
+          <span class="ms-auto badge" style="background:#e63946;color:#fff;border-radius:20px;font-size:.7rem;">{{ bookings|length }}</span>
         </a>
-        <a href="#users" onclick="show('users')" id="nav-users"
-          class="admin-nav-link">
-          <i class="bi bi-people-fill me-2"></i>Users
-          <span class="badge rounded-pill ms-auto" style="background:var(--blue);">{{ users|length }}</span>
+        <a href="#" onclick="show('users')" id="nav-users" class="admin-nav-link">
+          <div class="admin-nav-icon" style="background:#eff6ff;"><i class="bi bi-people-fill" style="color:var(--blue);"></i></div>
+          <span>Users</span>
+          <span class="ms-auto badge" style="background:var(--blue);color:#fff;border-radius:20px;font-size:.7rem;">{{ users|length }}</span>
         </a>
-        <a href="#trips" onclick="show('trips')" id="nav-trips"
-          class="admin-nav-link">
-          <i class="bi bi-airplane me-2"></i>Trips
-          <span class="badge rounded-pill ms-auto" style="background:var(--teal);">{{ trips|length }}</span>
+        <a href="#" onclick="show('trips')" id="nav-trips" class="admin-nav-link">
+          <div class="admin-nav-icon" style="background:#f0fdf4;"><i class="bi bi-airplane-fill" style="color:var(--teal);"></i></div>
+          <span>Trips</span>
+          <span class="ms-auto badge" style="background:var(--teal);color:#fff;border-radius:20px;font-size:.7rem;">{{ trips|length }}</span>
         </a>
-      </nav>
-      <hr>
-      <div class="text-muted small text-center">
-        <i class="bi bi-person-fill-gear me-1"></i>{{ session.user_name }}
       </div>
+
     </div>
   </div>
 
@@ -225,16 +231,25 @@
 .admin-nav-link {
   display: flex;
   align-items: center;
+  gap: .7rem;
   padding: .6rem .8rem;
-  border-radius: 8px;
-  color: var(--muted);
+  border-radius: 10px;
+  color: var(--text);
   font-weight: 600;
   font-size: .88rem;
   text-decoration: none;
   transition: all .2s;
+  margin-bottom: 2px;
 }
-.admin-nav-link:hover { background: #f1f5f9; color: var(--text); }
+.admin-nav-link:hover { background: #f8fafc; color: var(--text); }
 .admin-nav-link.active { background: #fff1f2; color: var(--primary); }
+.admin-nav-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .9rem;
+  flex-shrink: 0;
+}
 </style>
 
 <script>
