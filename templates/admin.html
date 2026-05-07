@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Admin Dashboard — TravelBook{% endblock %}
+{% block title %}Admin — TravelBook{% endblock %}
 {% block content %}
 <script>
   let timer = setTimeout(() => location.reload(), 30000);
@@ -11,70 +11,73 @@
 <div class="d-flex gap-4">
 
   <!-- Sidebar -->
-  <div style="width:220px;flex-shrink:0;">
+  <div style="width:230px;flex-shrink:0;">
     <div class="sticky-top" style="top:80px;">
-      <div style="background:#fff;border-radius:14px;padding:.5rem;box-shadow:0 2px 12px rgba(0,0,0,.07);border:1px solid var(--border);">
-        <div style="font-size:.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;padding:.5rem .8rem .4rem;">Menu</div>
-        <a href="#" onclick="show('bookings')" id="nav-bookings" class="admin-nav-link active">
-          <div class="admin-nav-icon" style="background:#fff7ed;"><i class="bi bi-ticket-perforated-fill" style="color:#ea580c;"></i></div>
-          <span>Bookings</span>
-          <span class="ms-auto" style="background:#e63946;color:#fff;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;">{{ bookings|length }}</span>
-        </a>
-        <a href="#" onclick="show('users')" id="nav-users" class="admin-nav-link">
-          <div class="admin-nav-icon" style="background:#eff6ff;"><i class="bi bi-people-fill" style="color:#2563eb;"></i></div>
-          <span>Users</span>
-          <span class="ms-auto" style="background:#2563eb;color:#fff;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;">{{ users|length }}</span>
-        </a>
-        <a href="#" onclick="show('trips')" id="nav-trips" class="admin-nav-link">
-          <div class="admin-nav-icon" style="background:#f0fdf4;"><i class="bi bi-airplane-fill" style="color:#16a34a;"></i></div>
-          <span>Trips</span>
-          <span class="ms-auto" style="background:#16a34a;color:#fff;border-radius:20px;padding:1px 8px;font-size:.68rem;font-weight:700;">{{ trips|length }}</span>
-        </a>
+      <div style="background:linear-gradient(135deg,var(--navy),var(--navy-3));border-radius:14px;padding:1.2rem 1rem;box-shadow:0 4px 16px rgba(0,0,0,.15);">
+
+        <!-- Admin Info -->
+        <div style="text-align:center;padding-bottom:1rem;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:1rem;">
+          <div style="width:48px;height:48px;background:rgba(230,57,70,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .6rem;">
+            <i class="bi bi-shield-lock-fill" style="color:var(--primary);font-size:1.3rem;"></i>
+          </div>
+          <div style="color:#fff;font-weight:700;font-size:.9rem;">{{ session.user_name }}</div>
+          <div style="color:#64748b;font-size:.72rem;margin-top:.2rem;">Administrator</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:.6rem;text-align:center;">
+              <div style="color:#fff;font-size:1.2rem;font-weight:800;">{{ bookings|length }}</div>
+              <div style="color:#64748b;font-size:.65rem;font-weight:600;">Bookings</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:.6rem;text-align:center;">
+              <div style="color:#fff;font-size:1.2rem;font-weight:800;">{{ users|length }}</div>
+              <div style="color:#64748b;font-size:.65rem;font-weight:600;">Users</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:.6rem;text-align:center;">
+              <div style="color:#fff;font-size:1.2rem;font-weight:800;">{{ trips|length }}</div>
+              <div style="color:#64748b;font-size:.65rem;font-weight:600;">Trips</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:.6rem;text-align:center;">
+              <div style="color:#e63946;font-size:.8rem;font-weight:800;">₱{{ "{:,.0f}".format(bookings|sum(attribute='total')) }}</div>
+              <div style="color:#64748b;font-size:.65rem;font-weight:600;">Revenue</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:.8rem;">
+          <div style="font-size:.65rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.5rem;padding:0 .4rem;">Menu</div>
+          <a href="#" onclick="show('bookings')" id="nav-bookings" class="admin-nav-link active">
+            <i class="bi bi-ticket-perforated-fill"></i>
+            <span>Bookings</span>
+            <span class="ms-auto" style="background:#e63946;color:#fff;border-radius:20px;padding:1px 7px;font-size:.65rem;font-weight:700;">{{ bookings|length }}</span>
+          </a>
+          <a href="#" onclick="show('users')" id="nav-users" class="admin-nav-link">
+            <i class="bi bi-people-fill"></i>
+            <span>Users</span>
+            <span class="ms-auto" style="background:#2563eb;color:#fff;border-radius:20px;padding:1px 7px;font-size:.65rem;font-weight:700;">{{ users|length }}</span>
+          </a>
+          <a href="#" onclick="show('trips')" id="nav-trips" class="admin-nav-link">
+            <i class="bi bi-airplane-fill"></i>
+            <span>Trips</span>
+            <span class="ms-auto" style="background:#16a34a;color:#fff;border-radius:20px;padding:1px 7px;font-size:.65rem;font-weight:700;">{{ trips|length }}</span>
+          </a>
+        </div>
+
       </div>
     </div>
   </div>
 
   <!-- Main Content -->
   <div class="flex-grow-1" style="min-width:0;">
-
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4 px-4 py-3" style="background:linear-gradient(135deg,var(--navy),var(--navy-3));border-radius:14px;">
-      <div>
-        <h5 class="fw-bold mb-0" style="color:#fff;"><i class="bi bi-shield-lock-fill me-2" style="color:var(--primary);"></i>Admin Dashboard</h5>
-        <small style="color:#64748b;">Full control over bookings, users and trips</small>
-      </div>
-      <span style="background:rgba(230,57,70,.15);color:#fca5a5;border:1px solid rgba(230,57,70,.25);border-radius:30px;padding:5px 14px;font-size:.82rem;font-weight:600;">
-        <i class="bi bi-person-fill-gear me-1"></i>{{ session.user_name }}
-      </span>
-    </div>
-
-    <!-- Stats -->
-    <div class="row g-3 mb-4">
-      <div class="col-6 col-md-3">
-        <div class="stat-card stat-red" data-icon="🎫">
-          <div class="stat-num">{{ bookings|length }}</div>
-          <div class="stat-lbl">Total Bookings</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card stat-blue" data-icon="👤">
-          <div class="stat-num">{{ users|length }}</div>
-          <div class="stat-lbl">Registered Users</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card stat-green" data-icon="🗺️">
-          <div class="stat-num">{{ trips|length }}</div>
-          <div class="stat-lbl">Active Trips</div>
-        </div>
-      </div>
-      <div class="col-6 col-md-3">
-        <div class="stat-card stat-orange" data-icon="💰">
-          <div class="stat-num">₱{{ "{:,.0f}".format(bookings|sum(attribute='total')) }}</div>
-          <div class="stat-lbl">Total Revenue</div>
-        </div>
-      </div>
-    </div>
 
     <!-- Bookings -->
     <div id="bookings">
@@ -84,13 +87,10 @@
           <span class="badge bg-danger rounded-pill">{{ bookings|length }}</span>
         </div>
         {% if bookings %}
-        <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+        <div class="table-responsive" style="max-height:500px;overflow-y:auto;">
           <table class="table admin-table mb-0">
             <thead>
-              <tr>
-                <th>Ref</th><th>Passenger</th><th>Route</th><th>Type</th>
-                <th>Date</th><th>Pax</th><th>Total</th><th>Status</th><th>Action</th>
-              </tr>
+              <tr><th>Ref</th><th>Passenger</th><th>Route</th><th>Type</th><th>Date</th><th>Pax</th><th>Total</th><th>Status</th><th>Action</th></tr>
             </thead>
             <tbody>
               {% for b in bookings %}
@@ -150,7 +150,7 @@
           <span class="badge rounded-pill" style="background:#2563eb;">{{ users|length }}</span>
         </div>
         {% if users %}
-        <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+        <div class="table-responsive" style="max-height:500px;overflow-y:auto;">
           <table class="table admin-table mb-0">
             <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead>
             <tbody>
@@ -194,7 +194,7 @@
           </a>
         </div>
         {% if trips %}
-        <div class="table-responsive" style="max-height:420px;overflow-y:auto;">
+        <div class="table-responsive" style="max-height:500px;overflow-y:auto;">
           <table class="table admin-table mb-0">
             <thead>
               <tr><th>Type</th><th>From</th><th>To</th><th>Departure</th><th>Arrival</th><th>Operator</th><th>Price</th><th>Seats</th><th>Action</th></tr>
@@ -212,9 +212,7 @@
                 <td style="font-size:.82rem;">{{ t.seats }}</td>
                 <td>
                   <div class="d-flex gap-1">
-                    <a href="{{ url_for('admin_edit_trip', trip_id=t.id) }}" class="action-btn action-btn-edit">
-                      <i class="bi bi-pencil-square"></i> Edit
-                    </a>
+                    <a href="{{ url_for('admin_edit_trip', trip_id=t.id) }}" class="action-btn action-btn-edit"><i class="bi bi-pencil-square"></i> Edit</a>
                     <form method="post" action="{{ url_for('admin_delete_trip', trip_id=t.id) }}" style="display:inline;" onsubmit="return confirm('Delete this trip?');">
                       <button class="action-btn action-btn-delete"><i class="bi bi-trash"></i> Delete</button>
                     </form>
@@ -237,17 +235,13 @@
 <style>
 .admin-nav-link {
   display:flex; align-items:center; gap:.6rem;
-  padding:.55rem .75rem; border-radius:10px;
-  color:var(--text); font-weight:600; font-size:.85rem;
+  padding:.55rem .7rem; border-radius:8px;
+  color:#94a3b8; font-weight:600; font-size:.85rem;
   text-decoration:none; transition:all .15s; margin-bottom:2px;
 }
-.admin-nav-link:hover { background:#f8fafc; }
-.admin-nav-link.active { background:#fff1f2; color:var(--primary); }
-.admin-nav-icon {
-  width:30px; height:30px; border-radius:7px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:.85rem; flex-shrink:0;
-}
+.admin-nav-link:hover { background:rgba(255,255,255,.06); color:#fff; }
+.admin-nav-link.active { background:rgba(230,57,70,.15); color:#fca5a5; }
+.admin-nav-link i { font-size:.9rem; width:16px; }
 </style>
 
 <script>
